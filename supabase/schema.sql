@@ -44,3 +44,8 @@ create policy "beauty_storage_delete" on storage.objects for delete to authentic
 -- alter table public.beauty_photos drop constraint if exists beauty_photos_category_check;
 -- alter table public.beauty_photos add constraint beauty_photos_category_check
 --   check(category in ('root','texture','waist','thigh','calf','lower_body'));
+
+-- Photo-verified gym attendance; workout minutes stored in beauty_daily.measurements JSONB.
+-- Apply to an existing deployment without deleting any records.
+alter table public.beauty_photos drop constraint if exists beauty_photos_category_check;
+alter table public.beauty_photos add constraint beauty_photos_category_check check (category in ('root','texture','waist','thigh','calf','lower_body','gym'));
