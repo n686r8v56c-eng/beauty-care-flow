@@ -38,3 +38,81 @@
 .insightsFoodLogs span{font-size:13px;line-height:1.5;flex:1;min-width:0;overflow-wrap:anywhere}
 .insightsFoodLogs button{font-size:19px;color:#afa6b6;border:0;background:none;flex-shrink:0}
 @media(max-width:380px){.insightsSegment button{font-size:11px;min-height:34px}.insightsChart svg{height:165px}.insightsDayTile strong{font-size:14px}.insightsPanel{padding:12px}}
+
+
+/* Phone text minimums; existing larger type remains unchanged. */
+@media (max-width: 749px) {
+    .insightsSegment button {
+        font-size: 15px !important
+    }
+    .insightsHead {
+        font-size: 16px !important
+    }
+    .insightsHead b {
+        font-size: 16px !important
+    }
+    .insightsHead span {
+        font-size: 14px !important
+    }
+    .insightsExplain {
+        font-size: 14px !important
+    }
+    .insightsFoot {
+        font-size: 14px !important
+    }
+    .insightsAxis {
+        font-size: 13px !important
+    }
+    .insightsLegend {
+        font-size: 14px !important
+    }
+    .insightsStat small {
+        font-size: 14px !important
+    }
+    .insightsStat strong {
+        font-size: 24px !important
+    }
+    .insightsDonut small {
+        font-size: 15px !important
+    }
+    .insightsDonut strong {
+        font-size: 20px !important
+    }
+    .insightsDonutLegend>div {
+        font-size: 15px !important
+    }
+    .insightsDonutLegend b {
+        font-size: 15px !important
+    }
+    .insightsDayTile small {
+        font-size: 14px !important
+    }
+    .insightsDayTile strong {
+        font-size: 16px !important
+    }
+    .insightsDayDetails h4 {
+        font-size: 16px !important
+    }
+    .insightsDayDetails p {
+        font-size: 15px !important
+    }
+    .insightsFoodLogs small {
+        font-size: 14px !important
+    }
+    .insightsFoodLogs span {
+        font-size: 16px !important
+    }
+    .insightsFoodLogs button {
+        font-size: 19px !important
+    }
+    @media (max-width:380px) {
+        .insightsSegment button {
+            font-size: 14px !important
+        }
+    }
+    @media (max-width:380px) {
+        .insightsDayTile strong {
+            font-size: 16px !important
+        }
+    }
+}

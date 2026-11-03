@@ -21,3 +21,214 @@
 .fourGrid .statTile small{font-size:10px;white-space:nowrap}
 .fourGrid .statTile strong{font-size:14px;white-space:nowrap;letter-spacing:-.4px}
 @media(max-width:380px){.fourGrid{gap:5px}.fourGrid .statTile{padding:9px 2px}.fourGrid .statTile strong{font-size:12px}}
+
+
+/* Phone text minimums; existing larger type remains unchanged. */
+@media (max-width: 749px) {
+    input {
+        font-size: 16px !important
+    }
+    textarea {
+        font-size: 16px !important
+    }
+    select {
+        font-size: 16px !important
+    }
+    h1 {
+        font-size: 21px !important
+    }
+    .brand {
+        font-size: 16px !important
+    }
+    .saveStatus {
+        font-size: 13px !important
+    }
+    .pageTitle h1 {
+        font-size: 19px !important
+    }
+    .bottomNav button {
+        font-size: 13px !important
+    }
+    .seg button {
+        font-size: 15px !important
+    }
+    .sectionTitle strong {
+        font-size: 16px !important
+    }
+    .sectionTitle span {
+        font-size: 14px !important
+    }
+    .hint {
+        font-size: 14px !important
+    }
+    .subtle {
+        font-size: 14px !important
+    }
+    .smallAdd {
+        font-size: 14px !important
+    }
+    .checkCard {
+        font-size: 16px !important
+    }
+    .addCard {
+        font-size: 16px !important
+    }
+    .lineHead {
+        font-size: 16px !important
+    }
+    .lineHead b {
+        font-size: 16px !important
+    }
+    .dateRow strong {
+        font-size: 15px !important
+    }
+    .todayBtn {
+        font-size: 14px !important
+    }
+    .photoSection>b {
+        font-size: 15px !important
+    }
+    .uploadTile {
+        font-size: 14px !important
+    }
+    .measureRow label {
+        font-size: 16px !important
+    }
+    .measureInput span {
+        font-size: 14px !important
+    }
+    .homeDate {
+        font-size: 14px !important
+    }
+    .kpi small {
+        font-size: 13px !important
+    }
+    .statTile small {
+        font-size: 13px !important
+    }
+    .kpi strong {
+        font-size: 22px !important
+    }
+    .kpi span {
+        font-size: 13px !important
+    }
+    .statTile strong {
+        font-size: 16px !important
+    }
+    .homeCheckHead {
+        font-size: 15px !important
+    }
+    .chip {
+        font-size: 13px !important
+    }
+    .monthHead strong {
+        font-size: 16px !important
+    }
+    .weekday {
+        font-size: 14px !important
+    }
+    .calendarCell>span:first-child {
+        font-size: 14px !important
+    }
+    .calendarCell b {
+        font-size: 14px !important
+    }
+    .calendarDash {
+        font-size: 13px !important
+    }
+    .recordValue {
+        font-size: 16px !important
+    }
+    .listDetails span {
+        font-size: 14px !important
+    }
+    .chartDates {
+        font-size: 13px !important
+    }
+    .chartSummary {
+        font-size: 13px !important
+    }
+    .chartSummary b {
+        font-size: 15px !important
+    }
+    .emptyGraph {
+        font-size: 15px !important
+    }
+    .summaryRow>span {
+        font-size: 15px !important
+    }
+    .modalHead strong {
+        font-size: 15px !important
+    }
+    .modalLabel {
+        font-size: 15px !important
+    }
+    .button {
+        font-size: 16px !important
+    }
+    .confirm p {
+        font-size: 15px !important
+    }
+    .toast {
+        font-size: 15px !important
+    }
+    .brandSymbol {
+        font-size: 22px !important
+    }
+    .authCard>p {
+        font-size: 15px !important
+    }
+    .authCard form label {
+        font-size: 15px !important
+    }
+    .textBtn {
+        font-size: 15px !important
+    }
+    .setupPage code {
+        font-size: 15px !important
+    }
+    .loading {
+        font-size: 16px !important
+    }
+    .loading small {
+        font-size: 15px !important
+    }
+    @media (max-width:360px) {
+        .kpi small {
+            font-size: 13px !important
+        }
+    }
+    @media (max-width:360px) {
+        .kpi strong {
+            font-size: 19px !important
+        }
+    }
+    .workoutCheck {
+        font-size: 16px !important
+    }
+    .manageTabs button {
+        font-size: 15px !important
+    }
+    @media (max-width:380px) {
+        .manageTabs button {
+            font-size: 14px !important
+        }
+    }
+    .stepsHomeKpi small {
+        font-size: 14px !important
+    }
+    .stepsHomeKpi strong {
+        font-size: 17px !important
+    }
+    .fourGrid .statTile small {
+        font-size: 13px !important
+    }
+    .fourGrid .statTile strong {
+        font-size: 16px !important
+    }
+    @media (max-width:380px) {
+        .fourGrid .statTile strong {
+            font-size: 15px !important
+        }
+    }
+}

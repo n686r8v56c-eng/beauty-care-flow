@@ -79,3 +79,130 @@
 .dietEventSummary{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}
 .dietEventSummary span{background:#eee6f7;border:1px solid #e3d6f0;color:#6a4d8b;border-radius:15px;padding:5px 9px;font-size:11px}
 @media(max-width:360px){.dietEventGrid button{font-size:11px}}
+
+
+/* Phone text minimums; existing larger type remains unchanged. */
+@media (max-width: 749px) {
+    .dietSegment button {
+        font-size: 15px !important
+    }
+    .dietPanel h3 {
+        font-size: 15px !important
+    }
+    .dietPanel input {
+        font-size: 16px !important
+    }
+    .dietPanel textarea {
+        font-size: 16px !important
+    }
+    .dietModal input {
+        font-size: 16px !important
+    }
+    .dietDayHeading b {
+        font-size: 16px !important
+    }
+    .dietDayHeading .dietTodayButton {
+        font-size: 14px !important
+    }
+    .dietLogToggle {
+        font-size: 16px !important
+    }
+    .dietLogItem {
+        font-size: 15px !important
+    }
+    .dietTime {
+        font-size: 14px !important
+    }
+    .dietLogText {
+        font-size: 15px !important
+    }
+    .dietSteps strong {
+        font-size: 16px !important
+    }
+    .dietMuted {
+        font-size: 14px !important
+    }
+    .dietDonut {
+        font-size: 15px !important
+    }
+    .dietFold {
+        font-size: 15px !important
+    }
+    .dietFoldRight {
+        font-size: 14px !important
+    }
+    .dietFoldRight small {
+        font-size: 14px !important
+    }
+    .dietWaterGrid button {
+        font-size: 16px !important
+    }
+    .dietWaterMeta {
+        font-size: 14px !important
+    }
+    .dietBinary button {
+        font-size: 15px !important
+    }
+    .dietSleepActions button {
+        font-size: 15px !important
+    }
+    .dietSectionHead strong {
+        font-size: 15px !important
+    }
+    .dietSectionHead button {
+        font-size: 15px !important
+    }
+    .dietNutritionCard small {
+        font-size: 14px !important
+    }
+    .dietValue b {
+        font-size: 22px !important
+    }
+    .dietValue span {
+        font-size: 13px !important
+    }
+    .dietPrimary {
+        font-size: 16px !important
+    }
+    .dietGraphLabel {
+        font-size: 15px !important
+    }
+    .dietGraphFoot {
+        font-size: 14px !important
+    }
+    .dietMonthHead strong {
+        font-size: 16px !important
+    }
+    .dietWeekday {
+        font-size: 14px !important
+    }
+    .dietCalendar button {
+        font-size: 15px !important
+    }
+    .dietCalendar button small {
+        font-size: 13px !important
+    }
+    .dietReview p {
+        font-size: 15px !important
+    }
+    .dietError {
+        font-size: 15px !important
+    }
+    .dietModal h3 {
+        font-size: 16px !important
+    }
+    .dietModal label {
+        font-size: 15px !important
+    }
+    .dietEventGrid button {
+        font-size: 15px !important
+    }
+    .dietEventSummary span {
+        font-size: 14px !important
+    }
+    @media (max-width:360px) {
+        .dietEventGrid button {
+            font-size: 14px !important
+        }
+    }
+}
