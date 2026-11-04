@@ -44,6 +44,15 @@ function ytId(text){
  }catch{return null}
 }
 const clean=a=>Array.isArray(a)?a.filter(x=>typeof x==='string'&&/^[\w-]{11}$/.test(x)).slice(0,MAX):[];
+// Merge cloud and this device without allowing an empty cloud row to hide saved local bookmarks.
+const mergeVideos=(server,local)=>{
+ const out={};
+ for(const id of new Set([...Object.keys(local||{}),...Object.keys(server||{})])){
+  const merged=[...new Set([...clean(server?.[id]),...clean(local?.[id])])].slice(0,MAX);
+  if(merged.length)out[id]=merged;
+ }
+ return out;
+};
 function getLocal(user){
  try{const data=JSON.parse(localStorage.getItem(key(user))||'{}');return data&&typeof data==='object'&&!Array.isArray(data)?data:{}}catch{return {}}
 }
@@ -58,16 +67,20 @@ export default function StretchingTab({db,user}){
  const[editor,setEditor]=useState(null);
  const[draft,setDraft]=useState({en:'',ko:'',level:1});
  const[opened,setOpened]=useState(null),[links,setLinks]=useState({}),[active,setActive]=useState({}),[message,setMessage]=useState(''),[cloud,setCloud]=useState(false);
+ const[showRecovery,setShowRecovery]=useState(false);
+ const[cloudError,setCloudError]=useState('');
  useEffect(()=>{
-  let alive=true;setLinks(getLocal(userId));setCloud(false);
+  let alive=true;setLinks(getLocal(userId));setCloud(false);setCloudError('');
   if(!db||!user?.id)return;
   db.from('beauty_stretch_videos').select('exercise_id,videos').eq('user_id',user.id).then(({data,error})=>{
-   if(!alive||error)return;
+   if(!alive)return;
+   if(error){setCloudError('클라우드 영상 목록을 읽지 못했어. 기기 기록은 유지하고 있어.');return;}
    const server={};for(const row of data||[])if(row.exercise_id!==CATALOG_ROW_ID)server[row.exercise_id]=clean(row.videos);
-   const local=getLocal(userId),merged={...server};
-   for(const[id,arr]of Object.entries(local))if(!(id in server))merged[id]=clean(arr);
-   setLinks(merged);localStorage.setItem(key(userId),JSON.stringify(merged));setCloud(true);
-   for(const[id,arr]of Object.entries(merged))if(!(id in server)&&arr.length)db.from('beauty_stretch_videos').upsert({user_id:user.id,exercise_id:Number(id),videos:arr},{onConflict:'user_id,exercise_id'}).then(()=>{});
+   const local=getLocal(userId),merged=mergeVideos(server,local);
+   setLinks(merged);
+   // Never overwrite cloud records automatically during loading or recovery.
+   try{localStorage.setItem(key(userId),JSON.stringify(merged))}catch{}
+   setCloud(true);
   });
   return()=>{alive=false}
  },[db,userId]);
@@ -199,6 +212,9 @@ export default function StretchingTab({db,user}){
   if(!window.confirm('이 유튜브 영상 링크를 삭제할까?'))return;
   save(id,clean(links[id]).filter((_,i)=>i!==index));setActive(a=>({...a,[id]:0}));
  };
+ const recovered=Object.entries(links).filter(([id,arr])=>clean(arr).length&&id!==String(CATALOG_ROW_ID)).map(([id,arr])=>({id:Number(id),videos:clean(arr),item:catalog.find(x=>x.id===Number(id))}));
+ const unattached=recovered.filter(x=>!x.item||x.item.deleted);
+ const totalSavedVideos=recovered.reduce((count,x)=>count+x.videos.length,0);
  const currentLevel=LEVELS.find(x=>x.id===level);
  const ordered=catalog.filter(item=>!item.deleted).sort((a,b)=>a.level-b.level||a.sort-b.sort||a.id-b.id);
  const numberById=new Map(ordered.map((item,index)=>[item.id,index+1]));
@@ -244,6 +260,22 @@ export default function StretchingTab({db,user}){
    <button type="button" className="stretching-archive-toggle" onClick={()=>setShowDeleted(x=>!x)}>삭제한 목록 {archived.length}개 {showDeleted?<ChevronUp size={16}/>:<ChevronDown size={16}/>}</button>
    {showDeleted&&archived.map(item=><div key={item.id} className="stretching-archived-row"><span>{item.en||item.ko} <small>{item.ko}</small></span><button type="button" onClick={()=>restoreItem(item)}><RotateCcw size={15}/> 복구</button></div>)}
   </div>}
+  <section className="stretching-recovery">
+    <button type="button" className="stretching-recovery-toggle" onClick={()=>setShowRecovery(v=>!v)} aria-expanded={showRecovery}>
+     <span>저장된 영상 확인 · {recovered.length}개 동작 / {totalSavedVideos}개 링크</span>
+     {showRecovery?<ChevronUp size={17}/>:<ChevronDown size={17}/>}
+    </button>
+    {showRecovery&&<div className="stretching-recovery-list">
+      <p>현재 계정의 클라우드와 이 기기에서 읽은 유튜브 링크야. 목록에서 숨긴 동작의 링크도 확인할 수 있어. 링크를 새로 저장하거나 삭제하지 않아.</p>
+      {!recovered.length&&<p>이 기기와 현재 연결된 계정에서 읽어 온 영상 링크가 없어. 다른 기기나 이전 앱 주소에 저장한 기록은 여기서 자동으로 읽지 못할 수 있어.</p>}
+      {recovered.map(({id,item,videos})=><div className="stretching-recovery-row" key={id}>
+        <strong>{item?.en||item?.ko||'이전 동작 #'+id}{item?.deleted?' (목록에서 숨김)':''}</strong>
+        <div>{videos.map((v,i)=><a key={v} href={'https://www.youtube.com/watch?v='+v} target="_blank" rel="noopener noreferrer">영상 {i+1} <ExternalLink size={13}/></a>)}</div>
+      </div>)}
+      {unattached.length>0&&<p>현재 목록에서 보이지 않는 동작 {unattached.length}개에 영상이 남아 있어. 위 링크에서 확인할 수 있어.</p>}
+    </div>}
+  </section>
+  {cloudError&&<div className="stretching-message" role="alert">{cloudError}</div>}
   {message&&<div className="stretching-message" role="status">{message}</div>}
   {!catalogCloud&&catalogReady&&<small className="stretching-sync-hint">현재 기기에 저장 중 · 로그인 계정 동기화 상태를 확인해 줘.</small>}
   {editor&&<div className="stretching-modal-backdrop" onClick={()=>setEditor(null)}>
