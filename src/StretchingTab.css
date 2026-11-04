@@ -31,3 +31,11 @@
 .stretching-modal textarea{border:1px solid #d7cce5;border-radius:10px;font-size:16px;width:100%;padding:11px;resize:vertical}
 .stretching-submit{border:0;background:#8e6fc2;color:#fff;font-weight:700;border-radius:9px;padding:12px;font-size:14px}
 @media(max-width:380px){.stretching-drill-toggle{gap:6px}.stretching-drill-name strong{font-size:14px}.stretching-video-detail{padding-left:27px}.stretching-link-button{width:36px;height:36px}}
+
+/* Five Voice-style stage selectors above the ten drills for each level */
+.stretching-levels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-bottom:5px}
+.stretching-levels button{min-width:0;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 2px;border:1px solid #e9dff1;border-radius:11px;background:#f8f5fb;color:#82748f}
+.stretching-levels button span{font-size:12px;line-height:1.2}
+.stretching-levels button strong{font-size:14px;line-height:1.25;font-weight:700}
+.stretching-levels button.active{border-color:#ac85de;background:#ede3fa;color:#7450ad;box-shadow:inset 0 0 0 1px #b291dd}
+@media(max-width:380px){.stretching-levels{gap:4px}.stretching-levels button{min-height:53px;padding:6px 1px}.stretching-levels button strong{font-size:12px}}
