@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useRef} from 'react';
-import {ChevronDown,ChevronUp,Link2,ExternalLink,Trash2,Plus,Pencil,ArrowUp,ArrowDown,RotateCcw,X} from 'lucide-react';
+import {ChevronDown,ChevronUp,Link2,ExternalLink,Trash2,Plus,Pencil,ArrowUp,ArrowDown,RotateCcw,Download,X} from 'lucide-react';
 import './StretchingTab.css';
 const drills=[{"id":1,"en":"Body Scan","ko":"신체 긴장 관찰"},{"id":51,"en":"Breathe","ko":"호흡"},{"id":2,"en":"Head Massage","ko":"헤드 마사지"},{"id":3,"en":"Jaw & Neck Release","ko":"턱 목 이완"},{"id":4,"en":"Shoulder Release","ko":"어깨 이완"},{"id":5,"en":"Scapular Release","ko":"견갑 이완"},{"id":6,"en":"Thoracic Mobility","ko":"흉추 가동성"},{"id":7,"en":"Easy Onset","ko":"부드러운 발성 시작"},{"id":8,"en":"Straw Phonation","ko":"빨대 발성"},{"id":9,"en":"Gentle Humming","ko":"허밍"},{"id":10,"en":"Comfortable Tone","ko":"편안한 지속 발성"},{"id":11,"en":"Lip Trill","ko":"입술 트릴"},{"id":12,"en":"Cup Bubble Phonation","ko":"물컵 발성"},{"id":13,"en":"Pitch Glide","ko":"음높이 이동"},{"id":14,"en":"Three-Pitch Pattern","ko":"3단 음높이"},{"id":15,"en":"Soft-Medium Voice","ko":"음량 전환"},{"id":16,"en":"M-N-NG Transition","ko":"비음 전환"},{"id":17,"en":"Humming to Vowel","ko":"허밍·모음 연결"},{"id":18,"en":"Resonant Syllables","ko":"공명 음절"},{"id":19,"en":"Resonant Sentences","ko":"공명 문장"},{"id":20,"en":"Voice-to-Speech","ko":"발성에서 말하기 연결"},{"id":21,"en":"Vowel Precision","ko":"모음 정확도"},{"id":22,"en":"Consonant Contrast","ko":"자음 구별"},{"id":23,"en":"Final Consonants","ko":"받침 발음"},{"id":24,"en":"Tongue Placement","ko":"혀의 위치"},{"id":25,"en":"Tongue Twisters","ko":"잰말놀이"},{"id":26,"en":"Rising-Falling Intonation","ko":"상승·하강 억양"},{"id":27,"en":"Contrastive Stress","ko":"강세 전환"},{"id":28,"en":"Rhythm Reading","ko":"리듬 낭독"},{"id":29,"en":"Tempo Variation","ko":"속도 조절"},{"id":30,"en":"Semantic Pausing","ko":"의미 단위 쉼"},{"id":31,"en":"Volume Scale","ko":"음량 조절"},{"id":32,"en":"Projection Without Shouting","ko":"소리 지르지 않는 투사"},{"id":33,"en":"Clear Speech","ko":"명료한 말하기"},{"id":34,"en":"Key Message Delivery","ko":"핵심 메시지 전달"},{"id":35,"en":"Emotion Contrast","ko":"감정 변화"},{"id":36,"en":"Emotional Restraint","ko":"절제된 감정"},{"id":37,"en":"Action Verb Reading","ko":"행동 의도 표현"},{"id":38,"en":"Intention Shift","ko":"의도 전환"},{"id":39,"en":"Hidden Meaning","ko":"서브텍스트"},{"id":40,"en":"Character Vocal Profile","ko":"캐릭터 음성"},{"id":41,"en":"First-Sight Reading","ko":"초견 낭독"},{"id":42,"en":"News Anchor Reading","ko":"뉴스 리딩"},{"id":43,"en":"Numbers & Names","ko":"숫자·고유명사"},{"id":44,"en":"Studio Reading","ko":"마이크 리딩"},{"id":45,"en":"Narration Reading","ko":"내레이션"},{"id":46,"en":"Dialogue Exchange","ko":"대사 교환"},{"id":47,"en":"Monologue Delivery","ko":"독백"},{"id":48,"en":"Scene Objective","ko":"장면 목표"},{"id":49,"en":"One-Minute Speech","ko":"1분 스피치"},{"id":50,"en":"Voice Recording Review","ko":"녹음 비교 평가"}];
 const LEVELS=[{id:1,label:'마사지'},{id:2,label:'이완'},{id:3,label:'폼롤러'},{id:4,label:'도구'},{id:5,label:'SNPE'}];
@@ -226,6 +226,47 @@ export default function StretchingTab({db,user}){
   if(!window.confirm('이 유튜브 영상 링크를 삭제할까?'))return;
   save(id,clean(links[id]).filter((_,i)=>i!==index));setActive(a=>({...a,[id]:0}));
  };
+ const [exporting,setExporting]=useState(false);
+ const exportBackup=async()=>{
+  if(exporting)return;
+  setExporting(true);
+  try{
+   // Read-only: export source copies alongside the union so no source is lost.
+   const device=getLocal(userId),current=mergeVideos(links,latestLinks.current);
+   let server={},cloudStatus='unavailable';
+   if(db&&user?.id){
+    const {data,error}=await db.from('beauty_stretch_videos').select('exercise_id,videos').eq('user_id',user.id);
+    if(error)cloudStatus='read-failed: '+error.message;
+    else{
+     cloudStatus='read-ok';
+     for(const row of data||[])if(row.exercise_id!==CATALOG_ROW_ID)server[String(row.exercise_id)]=clean(row.videos);
+    }
+   }
+   const ids=[...new Set([...Object.keys(device),...Object.keys(current),...Object.keys(server)])]
+    .filter(id=>id!==String(CATALOG_ROW_ID)).sort((a,b)=>Number(a)-Number(b));
+   const entries=ids.map(id=>{
+    const item=catalog.find(x=>String(x.id)===id);
+    const sources={cloud:clean(server[id]),device:clean(device[id]),screen:clean(current[id])};
+    const unique=[...new Set([...sources.cloud,...sources.device,...sources.screen])];
+    return {exerciseId:Number(id),title:item?.en||'',koreanTitle:item?.ko||'',category:item?.level||null,
+     archived:!!item?.deleted,urls:unique.map(v=>'https://www.youtube.com/watch?v='+v),
+     sources:Object.fromEntries(Object.entries(sources).map(([k,v])=>[k,v.map(id=>'https://www.youtube.com/watch?v='+id)]))};
+   });
+   const now=new Date(),backup={format:'beauty-care-stretching-backup-v1',
+    exportedAt:now.toISOString(),cloudStatus,totalExercises:entries.filter(x=>x.urls.length).length,
+    totalUniqueLinks:entries.reduce((n,x)=>n+x.urls.length,0),
+    catalog:catalog.map(x=>({id:x.id,en:x.en,ko:x.ko,level:x.level,sort:x.sort,deleted:x.deleted})),entries};
+   const stamp=now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')
+    +'-'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+   const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'});
+   const url=URL.createObjectURL(blob),anchor=document.createElement('a');
+   anchor.href=url;anchor.download='beauty-care-stretching-'+stamp+'.json';
+   document.body.appendChild(anchor);anchor.click();anchor.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),60000);
+   alertUser('JSON 백업 다운로드 · '+backup.totalUniqueLinks+'개 링크'+(cloudStatus==='read-ok'?'':' · 클라우드 확인 실패'));
+  }catch(e){alertUser('백업 실패: '+(e?.message||'알 수 없는 오류'))}
+  finally{setExporting(false)}
+ };
  const recovered=Object.entries(links).filter(([id,arr])=>clean(arr).length&&id!==String(CATALOG_ROW_ID)).map(([id,arr])=>({id:Number(id),videos:clean(arr),item:catalog.find(x=>x.id===Number(id))}));
  const unattached=recovered.filter(x=>!x.item||x.item.deleted);
  const totalSavedVideos=recovered.reduce((count,x)=>count+x.videos.length,0);
@@ -238,7 +279,8 @@ export default function StretchingTab({db,user}){
   <div className="stretching-levels" role="tablist" aria-label="스트레칭 단계">
    {LEVELS.map(item=><button type="button" role="tab" aria-selected={level===item.id} className={level===item.id?'active':''} key={item.id} onClick={()=>{setLevel(item.id);setOpened(null)}}><span>Lv.{item.id}</span><strong>{item.label}</strong></button>)}
   </div>
-  <div className="stretching-list-heading"><strong>LEVEL {level} · {currentLevel.label}</strong><div className="stretching-header-actions"><span>{visibleDrills.length} Drill</span><button type="button" onClick={openNew} disabled={!catalogReady} aria-label="동작 추가" title="동작 추가"><Plus size={17}/></button><button type="button" className={editingMode?'active':''} onClick={()=>setEditingMode(x=>!x)} disabled={!catalogReady}><Pencil size={15}/> 편집</button></div></div>
+  <div className="stretching-backup-bar"><button type="button" onClick={exportBackup} disabled={exporting}><Download size={16}/>{exporting?'백업 준비 중…':'JSON 백업 다운로드'}</button><small>전체 스트레칭 동작과 영상 링크 · 읽기 전용</small></div>
+   <div className="stretching-list-heading"><strong>LEVEL {level} · {currentLevel.label}</strong><div className="stretching-header-actions"><span>{visibleDrills.length} Drill</span><button type="button" onClick={openNew} disabled={!catalogReady} aria-label="동작 추가" title="동작 추가"><Plus size={17}/></button><button type="button" className={editingMode?'active':''} onClick={()=>setEditingMode(x=>!x)} disabled={!catalogReady}><Pencil size={15}/> 편집</button></div></div>
   <div className="stretching-drills">{visibleDrills.map(item=>{
    const arr=clean(links[item.id]),expanded=opened===item.id,index=Math.min(active[item.id]||0,Math.max(0,arr.length-1));
    return <div className="stretching-drill" key={item.id}>
