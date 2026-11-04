@@ -64,3 +64,13 @@
  .stretching-drill-row:has(.stretching-edit-controls) .stretching-drill-toggle{gap:4px}
  .stretching-drill-row:has(.stretching-edit-controls) .stretching-drill-name strong{font-size:13px}
 }
+
+/* Read-only bookmark recovery inventory: no deletes or automatic server writes. */
+.stretching-recovery{padding:7px 0 4px;margin-top:7px;border-top:1px solid #eee7f3}
+.stretching-recovery-toggle{border:1px solid #e6dbef;border-radius:10px;padding:11px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:#f6f2fa;color:#75579b;font-size:13px;font-weight:700;text-align:left}
+.stretching-recovery-list{padding:10px 4px 0;display:flex;flex-direction:column;gap:8px}
+.stretching-recovery-list>p{font-size:12px;line-height:1.5;color:#857594;margin:0 0 4px}
+.stretching-recovery-row{border-bottom:1px solid #eee9f3;padding:8px 1px 12px;display:flex;flex-direction:column;gap:7px}
+.stretching-recovery-row>strong{font-size:14px;color:#473a51;overflow-wrap:anywhere}
+.stretching-recovery-row>div{display:flex;gap:7px;flex-wrap:wrap}
+.stretching-recovery-row a{display:flex;gap:4px;align-items:center;padding:7px 10px;border-radius:8px;background:#f1eafb;color:#7556a1;font-size:12px;text-decoration:none}
