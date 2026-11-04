@@ -167,6 +167,23 @@ export default function StretchingTab({db,user}){
   if(!fresh.length){alertUser(previous.length===MAX?'영상은 최대 3개까지 등록 가능해.':'이미 등록된 영상이야.');return false}
   save(id,[...previous,...fresh]);setOpened(id);setActive(a=>({...a,[id]:previous.length}));alertUser('영상 '+fresh.length+'개 등록 완료');return true;
  };
+ const copyVideoLink=async videoId=>{
+  const url='https://www.youtube.com/watch?v='+videoId;
+  try{
+   if(navigator.clipboard?.writeText){
+    await navigator.clipboard.writeText(url);
+   }else{
+    const field=document.createElement('textarea');
+    field.value=url;field.setAttribute('readonly','');field.style.position='fixed';field.style.opacity='0';
+    document.body.appendChild(field);field.select();
+    const copied=document.execCommand('copy');field.remove();
+    if(!copied)throw new Error('copy blocked');
+   }
+   alertUser('영상 링크를 복사했어.');
+  }catch{
+   alertUser('링크 복사가 차단됐어. 영상 열기로 주소를 복사해 줘.');
+  }
+ };
  const addFromClipboard=async id=>{
   if(clean(links[id]).length>=MAX){setOpened(id);alertUser('영상은 최대 3개까지 등록 가능해.');return}
   try{
@@ -214,6 +231,7 @@ export default function StretchingTab({db,user}){
       {arr.length>1&&<div className="stretching-video-switch">{arr.map((v,i)=><button key={v} className={i===index?'active':''} onClick={()=>setActive(a=>({...a,[item.id]:i}))}>영상 {i+1}</button>)}</div>}
       <div className="stretching-video-frame"><iframe title={item.en+' 영상'} key={arr[index]} src={'https://www.youtube-nocookie.com/embed/'+arr[index]} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy"/></div>
       <div className="stretching-video-actions">
+       <button type="button" onClick={()=>copyVideoLink(arr[index])}><Link2 size={15}/> 링크 복사</button>
        <a href={'https://www.youtube.com/watch?v='+arr[index]} target="_blank" rel="noopener noreferrer"><ExternalLink size={15}/> 영상 열기</a>
        <button onClick={()=>remove(item.id,index)}><Trash2 size={15}/> 링크 삭제</button>
        {arr.length<MAX&&<button onClick={()=>addFromClipboard(item.id)}><Plus size={15}/> 영상 추가</button>}
