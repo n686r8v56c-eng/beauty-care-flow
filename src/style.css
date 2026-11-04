@@ -232,3 +232,20 @@
         }
     }
 }
+
+/* Calendar moved into app header; strength occupies former bottom navigation slot. */
+.topCalendarBtn{border:1px solid #e7d9f3;border-radius:9px;padding:7px 9px;display:flex;align-items:center;gap:5px;background:#f6effd;color:#7754a4;font-size:13px;font-weight:700;white-space:nowrap}
+.topCalendarBtn.active{background:#e9def6;border-color:#aa88d5}
+.top .right{gap:5px}
+@media(max-width:390px){.top{padding:0 11px}.topCalendarBtn{padding:7px 8px}.topCalendarBtn span{font-size:12px}.top .saveStatus{font-size:11px!important}}
+
+/* Small-screen calendar: separate daily completion and minutes rather than clipping. */
+.calendarGrid{gap:4px}
+.calendarCell{height:77px;min-width:0;overflow:hidden;padding:7px 2px 6px;justify-content:flex-start;gap:5px}
+.calendarCell>span:first-child{font-size:15px!important;line-height:1.15;font-weight:600}
+.calendarCell .calendarManageData{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;min-width:0;overflow:hidden}
+.calendarCell .calendarManageData b{display:block;font-size:13px!important;line-height:1.2;white-space:nowrap;letter-spacing:-.3px;overflow:visible}
+.calendarCell .calendarManageData small{font-size:11px!important;color:#77698a;line-height:1.1;white-space:nowrap}
+.calendarCell .calendarDash{font-size:15px!important}
+.calendarCell img{width:100%;height:38px;object-fit:cover}
+@media(max-width:380px){.calendarGrid{gap:3px}.calendarCell{height:73px;padding:6px 1px}.calendarCell .calendarManageData b{font-size:12px!important}.calendarCell .calendarManageData small{font-size:10px!important}}
