@@ -74,3 +74,10 @@
 .stretching-recovery-row>strong{font-size:14px;color:#473a51;overflow-wrap:anywhere}
 .stretching-recovery-row>div{display:flex;gap:7px;flex-wrap:wrap}
 .stretching-recovery-row a{display:flex;gap:4px;align-items:center;padding:7px 10px;border-radius:8px;background:#f1eafb;color:#7556a1;font-size:12px;text-decoration:none}
+
+
+/* One-tap, non-destructive backup of stretching catalog and video bookmarks. */
+.stretching-backup-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.stretching-backup-bar button{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#eee5f9;border:1px solid #d9c6ef;border-radius:9px;color:#6d4b9a;padding:9px 12px;font-size:14px;font-weight:700;min-height:38px;cursor:pointer}
+.stretching-backup-bar button:disabled{opacity:.5}
+.stretching-backup-bar small{font-size:12px;color:#89799b;line-height:1.4}
