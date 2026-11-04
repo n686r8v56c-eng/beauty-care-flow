@@ -2,9 +2,9 @@
 -- Safe, additive migration. Does not touch or delete existing diet or care data.
 create table if not exists public.beauty_stretch_videos (
   user_id uuid not null references auth.users(id) on delete cascade,
-  exercise_id integer not null check (exercise_id between 1 and 50),
+  exercise_id integer not null check (exercise_id > 0),
   videos jsonb not null default '[]'::jsonb
-    check (jsonb_typeof(videos) = 'array' and jsonb_array_length(videos) <= 3),
+    check (jsonb_typeof(videos) = 'array' and jsonb_array_length(videos) <= 5),
   updated_at timestamptz not null default now(),
   primary key(user_id, exercise_id)
 );
