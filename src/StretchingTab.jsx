@@ -59,8 +59,8 @@ const mergeVideos=(server,local)=>{
 function getLocal(user){
  try{const data=JSON.parse(localStorage.getItem(key(user))||'{}');return data&&typeof data==='object'&&!Array.isArray(data)?data:{}}catch{return {}}
 }
-export default function StretchingTab({db,user}){
- const userId=user?.id||'guest';
+export default function StretchingTab({db,user,readOnly=false}){
+ const userId=readOnly?'public-preview':user?.id||'guest';
  const[level,setLevel]=useState(1);
  const[catalog,setCatalog]=useState(originalCatalog);
  const[catalogReady,setCatalogReady]=useState(false);
@@ -75,8 +75,8 @@ export default function StretchingTab({db,user}){
   const[showRecovery,setShowRecovery]=useState(false);
  const[cloudError,setCloudError]=useState('');
  useEffect(()=>{
-  let alive=true;const cached=getLocal(userId);latestLinks.current=cached;setLinks(cached);setCloud(false);setCloudError('');
-  if(!db||!user?.id)return;
+  let alive=true;const cached=readOnly?{}:getLocal(userId);latestLinks.current=cached;setLinks(cached);setCloud(false);setCloudError('');
+  if(readOnly||!db||!user?.id)return;
   db.from('beauty_stretch_videos').select('exercise_id,videos').eq('user_id',user.id).then(async({data,error})=>{
    if(!alive)return;
    if(error){setCloudError('클라우드 영상 목록을 읽지 못했어. 기기 기록은 유지하고 있어.');return;}
@@ -99,9 +99,9 @@ export default function StretchingTab({db,user}){
  },[db,userId]);
  useEffect(()=>{
   let alive=true;
-  const local=readCatalog(userId);
+  const local=readOnly?null:readCatalog(userId);
   setCatalog(local||originalCatalog);setCatalogReady(false);setCatalogCloud(false);
-  if(!db||!user?.id){setCatalogReady(true);return()=>{alive=false};}
+  if(readOnly||!db||!user?.id){setCatalogReady(true);return()=>{alive=false};}
   const query=db.from('beauty_stretch_videos').select('videos')
    .eq('user_id',user.id).eq('exercise_id',CATALOG_ROW_ID).maybeSingle();
   query.then(async({data,error})=>{
@@ -279,8 +279,8 @@ export default function StretchingTab({db,user}){
   <div className="stretching-levels" role="tablist" aria-label="스트레칭 단계">
    {LEVELS.map(item=><button type="button" role="tab" aria-selected={level===item.id} className={level===item.id?'active':''} key={item.id} onClick={()=>{setLevel(item.id);setOpened(null)}}><span>Lv.{item.id}</span><strong>{item.label}</strong></button>)}
   </div>
-  <div className="stretching-backup-bar"><button type="button" onClick={exportBackup} disabled={exporting}><Download size={16}/>{exporting?'백업 준비 중…':'JSON 백업 다운로드'}</button><small>전체 스트레칭 동작과 영상 링크 · 읽기 전용</small></div>
-   <div className="stretching-list-heading"><strong>LEVEL {level} · {currentLevel.label}</strong><div className="stretching-header-actions"><span>{visibleDrills.length} Drill</span><button type="button" onClick={openNew} disabled={!catalogReady} aria-label="동작 추가" title="동작 추가"><Plus size={17}/></button><button type="button" className={editingMode?'active':''} onClick={()=>setEditingMode(x=>!x)} disabled={!catalogReady}><Pencil size={15}/> 편집</button></div></div>
+  {!readOnly&&<div className="stretching-backup-bar"><button type="button" onClick={exportBackup} disabled={exporting}><Download size={16}/>{exporting?'백업 준비 중…':'JSON 백업 다운로드'}</button><small>전체 스트레칭 동작과 영상 링크 · 읽기 전용</small></div>}
+   <div className="stretching-list-heading"><strong>LEVEL {level} · {currentLevel.label}</strong><div className="stretching-header-actions"><span>{visibleDrills.length} Drill</span><button type="button" onClick={openNew} disabled={!catalogReady||readOnly} aria-label="동작 추가" title="동작 추가"><Plus size={17}/></button><button type="button" className={editingMode?'active':''} onClick={()=>setEditingMode(x=>!x)} disabled={!catalogReady||readOnly}><Pencil size={15}/> 편집</button></div></div>
   <div className="stretching-drills">{visibleDrills.map(item=>{
    const arr=clean(links[item.id]),expanded=opened===item.id,index=Math.min(active[item.id]||0,Math.max(0,arr.length-1));
    return <div className="stretching-drill" key={item.id}>
@@ -290,13 +290,13 @@ export default function StretchingTab({db,user}){
       <span className="stretching-drill-name"><strong>{item.en||item.ko}</strong>{item.ko&&item.en&&<small>{item.ko}</small>}</span>
       {expanded?<ChevronUp size={18}/>:<ChevronDown size={18}/>}
      </button>
-     {editingMode&&<div className="stretching-edit-controls">
+     {editingMode&&!readOnly&&<div className="stretching-edit-controls">
       <button type="button" aria-label="위로 이동" title="위로 이동" onClick={()=>changePosition(item,-1)}><ArrowUp size={15}/></button>
       <button type="button" aria-label="아래로 이동" title="아래로 이동" onClick={()=>changePosition(item,1)}><ArrowDown size={15}/></button>
       <button type="button" aria-label="동작 수정" title="동작 수정" onClick={()=>openEdit(item)}><Pencil size={15}/></button>
       <button type="button" aria-label="동작 삭제" title="동작 삭제" onClick={()=>archiveItem(item)}><Trash2 size={15}/></button>
      </div>}
-     {!editingMode&&<button type="button" className="stretching-link-button" aria-label={item.en+' 유튜브 링크 추가'} onClick={()=>addFromClipboard(item.id)}><Link2 size={20}/></button>}
+     {!editingMode&&!readOnly&&<button type="button" className="stretching-link-button" aria-label={item.en+' 유튜브 링크 추가'} onClick={()=>addFromClipboard(item.id)}><Link2 size={20}/></button>}
     </div>
     {expanded&&<div className="stretching-video-detail">
      {arr.length?<>
@@ -305,18 +305,18 @@ export default function StretchingTab({db,user}){
       <div className="stretching-video-actions">
        <button type="button" onClick={()=>copyVideoLink(arr[index])}><Link2 size={15}/> 링크 복사</button>
        <a href={'https://www.youtube.com/watch?v='+arr[index]} target="_blank" rel="noopener noreferrer"><ExternalLink size={15}/> 영상 열기</a>
-       <button onClick={()=>remove(item.id,index)}><Trash2 size={15}/> 링크 삭제</button>
-       {arr.length<MAX&&<button onClick={()=>addFromClipboard(item.id)}><Plus size={15}/> 영상 추가</button>}
+       <button disabled={readOnly} onClick={()=>remove(item.id,index)}><Trash2 size={15}/> 링크 삭제</button>
+       {!readOnly&&arr.length<MAX&&<button onClick={()=>addFromClipboard(item.id)}><Plus size={15}/> 영상 추가</button>}
       </div>
      </>:<div className="stretching-no-video"><strong>영상 링크 등록 대기</strong><span>오른쪽 링크 아이콘을 눌러 유튜브 주소를 등록해 줘.</span></div>}
     </div>}
    </div>
   })}</div>
-  {editingMode&&archived.length>0&&<div className="stretching-archive">
+  {!readOnly&&editingMode&&archived.length>0&&<div className="stretching-archive">
    <button type="button" className="stretching-archive-toggle" onClick={()=>setShowDeleted(x=>!x)}>삭제한 목록 {archived.length}개 {showDeleted?<ChevronUp size={16}/>:<ChevronDown size={16}/>}</button>
    {showDeleted&&archived.map(item=><div key={item.id} className="stretching-archived-row"><span>{item.en||item.ko} <small>{item.ko}</small></span><button type="button" onClick={()=>restoreItem(item)}><RotateCcw size={15}/> 복구</button></div>)}
   </div>}
-  <section className="stretching-recovery">
+  {!readOnly&&<section className="stretching-recovery">
     <button type="button" className="stretching-recovery-toggle" onClick={()=>setShowRecovery(v=>!v)} aria-expanded={showRecovery}>
      <span>저장된 영상 확인 · {recovered.length}개 동작 / {totalSavedVideos}개 링크</span>
      {showRecovery?<ChevronUp size={17}/>:<ChevronDown size={17}/>}
@@ -330,11 +330,11 @@ export default function StretchingTab({db,user}){
       </div>)}
       {unattached.length>0&&<p>현재 목록에서 보이지 않는 동작 {unattached.length}개에 영상이 남아 있어. 위 링크에서 확인할 수 있어.</p>}
     </div>}
-  </section>
+  </section>}
   {cloudError&&<div className="stretching-message" role="alert">{cloudError}</div>}
   {message&&<div className="stretching-message" role="status">{message}</div>}
   {!catalogCloud&&catalogReady&&<small className="stretching-sync-hint">현재 기기에 저장 중 · 로그인 계정 동기화 상태를 확인해 줘.</small>}
-  {editor&&<div className="stretching-modal-backdrop" onClick={()=>setEditor(null)}>
+  {!readOnly&&editor&&<div className="stretching-modal-backdrop" onClick={()=>setEditor(null)}>
    <form className="stretching-modal" role="dialog" aria-modal="true" aria-label={editor.mode==='add'?'동작 추가':'동작 수정'} onClick={e=>e.stopPropagation()} onSubmit={submitItem}>
     <div className="stretching-modal-title"><strong>{editor.mode==='add'?'동작 추가':'동작 수정'}</strong><button type="button" aria-label="닫기" onClick={()=>setEditor(null)}><X size={19}/></button></div>
     <label>영문 이름<input value={draft.en} onChange={e=>setDraft(d=>({...d,en:e.target.value}))} maxLength={120} placeholder="예: Body Scan" autoFocus/></label>
