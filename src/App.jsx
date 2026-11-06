@@ -3,7 +3,7 @@ import{createClient}from'@supabase/supabase-js';
 import{House,ClipboardCheck,CalendarDays,ChartNoAxesCombined,Activity,Dumbbell,Utensils,Camera,Plus,ChevronLeft,ChevronRight,LogOut,Check, X,Trash2,UploadCloud,Images,Eye,EyeOff,Settings2}from'lucide-react';
 import StretchingTab from './StretchingTab.jsx';
 import DietTab from './DietTab.jsx';
-function PublicBeautyPreview(){return <div className="app"><header className="top"><div className="brand"><span className="logo">B</span><span>Beauty Care Flow</span></div><div className="right"><span className="saveStatus">읽기 전용 체험</span></div></header><main><div className="pageTitle"><h1>스트레칭</h1></div><StretchingTab db={null} user={null} readOnly/></main><nav className="bottomNav"><button disabled>홈</button><button className="active">스트레칭</button><button disabled>관리</button><button disabled>근력운동</button><button disabled>분석</button></nav></div>}
+function PublicBeautyPreview(){return <div className="app"><header className="top"><div className="brand"><span className="logo">B</span><span>Beauty Care Flow</span></div><div className="right"><span className="saveStatus">읽기 전용 체험</span></div></header><main><div className="pageTitle"><h1>스트레칭</h1></div><StretchingTab db={null} user={null} readOnly/></main><nav className="bottomNav"><button disabled>홈</button><button className="active">스트레칭</button><button disabled>관리</button><button disabled>근력운동</button><button disabled>식단</button><button disabled>분석</button></nav></div>}
 
 const url=import.meta.env.VITE_SUPABASE_URL,key=import.meta.env.VITE_SUPABASE_ANON_KEY;
 const db=url&&key?createClient(url,key):null;
