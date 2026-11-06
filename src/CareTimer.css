@@ -7,3 +7,18 @@
 .careTimerSaveButton{background:#9a7bc7;color:#fff}
 .careTimerSaveButton:disabled{opacity:.45}
 .careTimerDeleteButton{background:#fff;color:#8762b1}
+
+/* Per-category soft pastel timer palette */
+.careTimer .manageTabs{background:transparent;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:0}
+.careTimer .manageTabs button{min-width:0;padding:11px 2px;border-radius:12px;background:var(--tab-soft);border:1px solid var(--tab-soft);color:var(--tab-deep);font-size:14px;font-weight:600}
+.careTimer .manageTabs button.active{background:var(--tab-accent);border-color:var(--tab-accent);color:white;box-shadow:0 2px 7px #00000012}
+.careTimer .careTimerPickRow{background:var(--care-soft)}
+.careTimer .careTimerPickRow input[type=checkbox],.careTimer .careTimerOptions input{accent-color:var(--care-accent)}
+.careTimer .careTimerPickRow input[type=number],.careTimer .careTimerSaved select,.careTimer .careTimerSaveRow input{border-color:var(--care-accent)}
+.careTimer .careTimerCenter b{color:var(--care-deep)}
+.careTimer .careTimerControls button{color:var(--care-deep);border-color:var(--care-accent)}
+.careTimer .careTimerControls .primary{background:var(--care-accent);border-color:var(--care-accent);color:white}
+.careTimer .careTimerStep.active{background:var(--care-soft);border-color:var(--care-accent)}
+.careTimer .careTimerSaveButton{background:var(--care-accent);border-color:var(--care-accent);color:white}
+.careTimer .careTimerDeleteButton{color:var(--care-deep);border-color:var(--care-accent)}
+.careTimer .careTimerNext{color:var(--care-deep)}
