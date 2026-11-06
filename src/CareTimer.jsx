@@ -3,11 +3,20 @@ import {Play,Pause,SkipBack,SkipForward,RotateCcw,Check,Save,Trash2} from 'lucid
 import './CareTimer.css';
 const fmt=n=>{const s=Math.max(0,Math.ceil(n));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const categories=[['face','얼굴'],['hair','헤어'],['body','바디'],['teeth','치아'],['grooming','제모']];
-const colors=['#a581cd','#8065c2','#b59cdd','#9275c6','#cebdea','#6e61ac','#d5b7ea','#9c8cbe'];
+const palettes={
+ face:{accent:'#9270c2',soft:'#efe7f9',deep:'#68469a',ring:['#9270c2','#b59bd7','#d0bde8','#8461b2','#bfa7e3']},
+ hair:{accent:'#53ab96',soft:'#e0f5ed',deep:'#287d68',ring:['#53ab96','#83cbb7','#b0e1d4','#389982','#91d4c2']},
+ body:{accent:'#d5ad47',soft:'#fff4cc',deep:'#856416',ring:['#d5ad47','#e8cc76','#f3de9e','#c29a32','#f0d688']},
+ teeth:{accent:'#6d9fce',soft:'#e6f2fc',deep:'#376b9d',ring:['#6d9fce','#9dc4e7','#c4dff5','#568cbd','#aacfed']},
+ grooming:{accent:'#da938f',soft:'#fff0ec',deep:'#a85c5a',ring:['#da938f','#edb8ae','#f6d4cb','#c97f7e','#eebfb6']}
+};
 const getSaved=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||'null');return value??fallback}catch{return fallback}};
 export default function CareTimer({items,userId,date,checks,onCheck}){
  const [category,setCategory]=useState('face');
  const list=useMemo(()=>items.filter(x=>!x.archived&&x.category===category&&x.kind==='check').sort((a,b)=>a.position-b.position),[items,category]);
+ const palette=palettes[category];
+ const colors=palette.ring;
+ const themeStyle={'--care-accent':palette.accent,'--care-soft':palette.soft,'--care-deep':palette.deep};
  const key='beauty-care-timer-v1:'+userId+':'+category;
  const routinesKey='beauty-care-saved-routines-v1:'+userId+':'+category;
  const [settings,setSettings]=useState(()=>getSaved(key,{}));
@@ -67,8 +76,8 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
  };
  const total=steps.reduce((n,s)=>n+s.seconds,0),elapsed=finished?total:steps.slice(0,index).reduce((n,s)=>n+s.seconds,0)+(selected?selected.seconds-remaining:0);
  const radius=96,circ=2*Math.PI*radius;
- return <div className="careTimer">
-   <div className="seg manageTabs">{categories.map(([id,name])=><button type="button" key={id} className={category===id?'active':''} onClick={()=>setCategory(id)}>{name}</button>)}</div>
+ return <div className="careTimer" style={themeStyle}>
+   <div className="seg manageTabs">{categories.map(([id,name])=><button type="button" key={id} className={category===id?'active':''} style={{'--tab-accent':palettes[id].accent,'--tab-soft':palettes[id].soft,'--tab-deep':palettes[id].deep}} onClick={()=>setCategory(id)}>{name}</button>)}</div>
    <section className="contentSection">
      <div className="careTimerSaved">
        <select aria-label="저장된 루틴 선택" value={selectedRoutine} onChange={e=>chooseRoutine(e.target.value)}>
