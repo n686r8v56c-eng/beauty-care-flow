@@ -15,7 +15,7 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
  const steps=useMemo(()=>list.filter(i=>settings[i.id]?.enabled!==false).map(i=>({id:i.id,title:i.label,seconds:Math.max(5,Math.min(3600,Number(settings[i.id]?.seconds)||300))})),[list,settings]);
  const stepSignature=steps.map(s=>s.id+':'+s.seconds).join('|');
  useEffect(()=>{setSettings(getSaved(key,{}));setPlaying(false);setFinished(false);setIndex(0);setRemaining(300)},[key]);
- useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(settings))}catch{}},[settings,key]);
+
  useEffect(()=>{setPlaying(false);setIndex(0);setFinished(false);setRemaining(steps[0]?.seconds||300)},[stepSignature,category]);
  const selected=steps[index];
  const beep=()=>{if(!tone)return;try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;const ctx=new Ctx(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=880;gain.gain.setValueAtTime(.08,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.25);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.25);osc.onended=()=>ctx.close()}catch{}};
@@ -24,7 +24,7 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
  useEffect(()=>{if(!playing||finished||!selected)return;deadline.current=performance.now()+remaining*1000;tick.current=setInterval(()=>{const left=Math.max(0,(deadline.current-performance.now())/1000);if(left<=0){clearInterval(tick.current);tick.current=null;current.current?.()}else setRemaining(left)},100);return()=>{clearInterval(tick.current);tick.current=null}},[playing,index,finished]);
  const toggle=()=>{if(!steps.length)return;if(finished){setIndex(0);setRemaining(steps[0].seconds);setFinished(false);setPlaying(true)}else if(playing){setRemaining(Math.max(0,(deadline.current-performance.now())/1000));setPlaying(false)}else setPlaying(true)};
  const jump=n=>{setPlaying(false);setFinished(false);const pos=Math.max(0,Math.min(steps.length-1,n));setIndex(pos);setRemaining(steps[pos]?.seconds||300)};
- const updateSetting=(id,patch)=>{setSettings(v=>({...v,[id]:{...v[id],...patch}}))};
+ const updateSetting=(id,patch)=>{setSettings(v=>{const next={...v,[id]:{...v[id],...patch}};try{localStorage.setItem(key,JSON.stringify(next))}catch{}return next})};
  const total=steps.reduce((n,s)=>n+s.seconds,0),elapsed=finished?total:steps.slice(0,index).reduce((n,s)=>n+s.seconds,0)+(selected?selected.seconds-remaining:0);
  const radius=96,circ=2*Math.PI*radius;
  return <div className="careTimer">
