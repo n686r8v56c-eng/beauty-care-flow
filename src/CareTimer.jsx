@@ -78,6 +78,16 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
  const radius=96,circ=2*Math.PI*radius;
  return <div className="careTimer" style={themeStyle}>
    <div className="seg manageTabs">{categories.map(([id,name])=><button type="button" key={id} className={category===id?'active':''} style={{'--tab-accent':palettes[id].accent,'--tab-soft':palettes[id].soft,'--tab-deep':palettes[id].deep}} onClick={()=>setCategory(id)}>{name}</button>)}</div>
+   {!!steps.length&&<section className="contentSection">
+    <div className="careTimerPie"><svg viewBox="0 0 240 240" aria-label="단계별 원형 타이머">
+     {steps.map((s,i)=>{const before=steps.slice(0,i).reduce((n,x)=>n+x.seconds,0)/total;return <circle key={s.id} cx="120" cy="120" r={radius} fill="none" stroke={colors[i%colors.length]} strokeWidth="32" strokeDasharray={Math.max(0,circ*s.seconds/total-3)+' '+circ} strokeDashoffset={-circ*before} transform="rotate(-90 120 120)" opacity={i<index||finished?.2:.95}/>})}
+     <circle cx="120" cy="120" r="67" fill="none" stroke={colors[index%colors.length]} strokeWidth="8" strokeDasharray={2*Math.PI*67*Math.max(0,Math.min(1,remaining/(selected?.seconds||1)))+' 421'} transform="rotate(-90 120 120)"/>
+    </svg><div className="careTimerCenter"><strong>{finished?'루틴 완료!':selected?.title}</strong><b>{fmt(remaining)}</b></div></div>
+    <div className="careTimerNext">{finished?'모든 관리 완료':index+1<steps.length?'다음 · '+steps[index+1].title:'마지막 관리'}</div>
+    <div className="careTimerControls"><button onClick={()=>jump(index-1)} aria-label="이전"><SkipBack size={20}/></button><button className="primary" onClick={toggle}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?'일시정지':finished?'다시 시작':'시작'}</button><button onClick={()=>jump(index+1)} aria-label="다음"><SkipForward size={20}/></button><button onClick={()=>jump(0)} aria-label="초기화"><RotateCcw size={18}/></button></div>
+    <div className="careTimerOptions"><label><input type="checkbox" checked={autoNext} onChange={e=>setAutoNext(e.target.checked)}/> 자동 다음</label><label><input type="checkbox" checked={tone} onChange={e=>setTone(e.target.checked)}/> 알림음</label><span>진행 {fmt(elapsed)}</span></div>
+    <div className="careTimerSteps">{steps.map((s,i)=><button key={s.id} className={'careTimerStep '+(i===index&&!finished?'active':'')} onClick={()=>jump(i)}><i style={{background:colors[i%colors.length]}}/><span>{checks?.[s.id]?'✓ ':''}{s.title}</span><small>{fmt(s.seconds)}</small><Check size={16} opacity={checks?.[s.id]?1:.2}/></button>)}</div>
+   </section>}
    <section className="contentSection">
      <div className="careTimerSaved">
        <select aria-label="저장된 루틴 선택" value={selectedRoutine} onChange={e=>chooseRoutine(e.target.value)}>
@@ -97,15 +107,5 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
        {selectedRoutine&&<button className="careTimerDeleteButton" type="button" onClick={deleteRoutine} aria-label="저장된 루틴 삭제"><Trash2 size={18}/></button>}
      </div>
    </section>
-   {!!steps.length&&<section className="contentSection">
-    <div className="careTimerPie"><svg viewBox="0 0 240 240" aria-label="단계별 원형 타이머">
-     {steps.map((s,i)=>{const before=steps.slice(0,i).reduce((n,x)=>n+x.seconds,0)/total;return <circle key={s.id} cx="120" cy="120" r={radius} fill="none" stroke={colors[i%colors.length]} strokeWidth="32" strokeDasharray={Math.max(0,circ*s.seconds/total-3)+' '+circ} strokeDashoffset={-circ*before} transform="rotate(-90 120 120)" opacity={i<index||finished?.2:.95}/>})}
-     <circle cx="120" cy="120" r="67" fill="none" stroke={colors[index%colors.length]} strokeWidth="8" strokeDasharray={2*Math.PI*67*Math.max(0,Math.min(1,remaining/(selected?.seconds||1)))+' 421'} transform="rotate(-90 120 120)"/>
-    </svg><div className="careTimerCenter"><strong>{finished?'루틴 완료!':selected?.title}</strong><b>{fmt(remaining)}</b></div></div>
-    <div className="careTimerNext">{finished?'모든 관리 완료':index+1<steps.length?'다음 · '+steps[index+1].title:'마지막 관리'}</div>
-    <div className="careTimerControls"><button onClick={()=>jump(index-1)} aria-label="이전"><SkipBack size={20}/></button><button className="primary" onClick={toggle}>{playing?<Pause size={18}/>:<Play size={18}/>} {playing?'일시정지':finished?'다시 시작':'시작'}</button><button onClick={()=>jump(index+1)} aria-label="다음"><SkipForward size={20}/></button><button onClick={()=>jump(0)} aria-label="초기화"><RotateCcw size={18}/></button></div>
-    <div className="careTimerOptions"><label><input type="checkbox" checked={autoNext} onChange={e=>setAutoNext(e.target.checked)}/> 자동 다음</label><label><input type="checkbox" checked={tone} onChange={e=>setTone(e.target.checked)}/> 알림음</label><span>진행 {fmt(elapsed)}</span></div>
-    <div className="careTimerSteps">{steps.map((s,i)=><button key={s.id} className={'careTimerStep '+(i===index&&!finished?'active':'')} onClick={()=>jump(i)}><i style={{background:colors[i%colors.length]}}/><span>{checks?.[s.id]?'✓ ':''}{s.title}</span><small>{fmt(s.seconds)}</small><Check size={16} opacity={checks?.[s.id]?1:.2}/></button>)}</div>
-   </section>}
  </div>
 }
