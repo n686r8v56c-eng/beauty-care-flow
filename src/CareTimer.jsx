@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {Play,Pause,SkipBack,SkipForward,RotateCcw,Check,Save} from 'lucide-react';
+import {Play,Pause,SkipBack,SkipForward,RotateCcw,Check,Save,Trash2} from 'lucide-react';
 import './CareTimer.css';
 const fmt=n=>{const s=Math.max(0,Math.ceil(n));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const categories=[['face','얼굴'],['hair','헤어'],['body','바디'],['teeth','치아'],['grooming','제모']];
@@ -9,12 +9,26 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
  const [category,setCategory]=useState('face');
  const list=useMemo(()=>items.filter(x=>!x.archived&&x.category===category&&x.kind==='check').sort((a,b)=>a.position-b.position),[items,category]);
  const key='beauty-care-timer-v1:'+userId+':'+category;
+ const routinesKey='beauty-care-saved-routines-v1:'+userId+':'+category;
  const [settings,setSettings]=useState(()=>getSaved(key,{}));
+ const [routines,setRoutines]=useState(()=>getSaved(routinesKey,[]));
+ const [selectedRoutine,setSelectedRoutine]=useState('');
+ const [routineName,setRoutineName]=useState('');
+ const [routineOrder,setRoutineOrder]=useState(null);
  const [index,setIndex]=useState(0),[remaining,setRemaining]=useState(300),[playing,setPlaying]=useState(false),[finished,setFinished]=useState(false),[autoNext,setAutoNext]=useState(true),[tone,setTone]=useState(true);
  const deadline=useRef(0),tick=useRef(null),current=useRef(null);
- const steps=useMemo(()=>list.filter(i=>settings[i.id]?.enabled!==false).map(i=>({id:i.id,title:i.label,seconds:Math.max(5,Math.min(3600,Number(settings[i.id]?.seconds)||300))})),[list,settings]);
+ const steps=useMemo(()=>{
+   const available=list.filter(i=>settings[i.id]?.enabled!==false);
+   const ordered=routineOrder?.length?[...available].sort((a,b)=>{const ia=routineOrder.indexOf(a.id),ib=routineOrder.indexOf(b.id);return (ia<0?999999:ia)-(ib<0?999999:ib)}):available;
+   return ordered.map(i=>({id:i.id,title:i.label,seconds:Math.max(5,Math.min(3600,Number(settings[i.id]?.seconds)||300))}));
+ },[list,settings,routineOrder]);
  const stepSignature=steps.map(s=>s.id+':'+s.seconds).join('|');
- useEffect(()=>{setSettings(getSaved(key,{}));setPlaying(false);setFinished(false);setIndex(0);setRemaining(300)},[key]);
+ useEffect(()=>{
+   setSettings(getSaved(key,{}));
+   setRoutines(getSaved(routinesKey,[]));
+   setSelectedRoutine('');setRoutineName('');setRoutineOrder(null);
+   setPlaying(false);setFinished(false);setIndex(0);setRemaining(300);
+ },[key,routinesKey]);
 
  useEffect(()=>{setPlaying(false);setIndex(0);setFinished(false);setRemaining(steps[0]?.seconds||300)},[stepSignature,category]);
  const selected=steps[index];
@@ -25,16 +39,54 @@ export default function CareTimer({items,userId,date,checks,onCheck}){
  const toggle=()=>{if(!steps.length)return;if(finished){setIndex(0);setRemaining(steps[0].seconds);setFinished(false);setPlaying(true)}else if(playing){setRemaining(Math.max(0,(deadline.current-performance.now())/1000));setPlaying(false)}else setPlaying(true)};
  const jump=n=>{setPlaying(false);setFinished(false);const pos=Math.max(0,Math.min(steps.length-1,n));setIndex(pos);setRemaining(steps[pos]?.seconds||300)};
  const updateSetting=(id,patch)=>{setSettings(v=>{const next={...v,[id]:{...v[id],...patch}};try{localStorage.setItem(key,JSON.stringify(next))}catch{}return next})};
+ const persistRoutines=next=>{setRoutines(next);try{localStorage.setItem(routinesKey,JSON.stringify(next))}catch{}};
+ const chooseRoutine=id=>{
+   setPlaying(false);setFinished(false);setIndex(0);
+   if(!id){setSelectedRoutine('');setRoutineName('');setRoutineOrder(null);return}
+   const saved=routines.find(r=>r.id===id);if(!saved)return;
+   const available=new Set(list.map(i=>i.id));
+   const selectedIds=(saved.steps||[]).map(s=>s.id);
+   const configured={};
+   list.forEach(item=>{configured[item.id]={enabled:selectedIds.includes(item.id),seconds:Math.max(5,Math.min(3600,Number((saved.steps||[]).find(s=>s.id===item.id)?.seconds)||300))}});
+   setSettings(configured);try{localStorage.setItem(key,JSON.stringify(configured))}catch{}
+   setRoutineOrder(selectedIds.filter(id=>available.has(id)));
+   setSelectedRoutine(saved.id);setRoutineName(saved.name);
+   const first=(saved.steps||[]).find(s=>available.has(s.id));
+   setRemaining(first?.seconds||300);
+ };
+ const saveRoutine=()=>{
+   const name=routineName.trim();if(!name||!steps.length)return;
+   const id=selectedRoutine||globalThis.crypto?.randomUUID?.()||String(Date.now());
+   const entry={id,name,steps:steps.map(s=>({id:s.id,seconds:s.seconds}))};
+   const next=[...routines.filter(r=>r.id!==id),entry];
+   persistRoutines(next);setSelectedRoutine(id);
+ };
+ const deleteRoutine=()=>{
+   if(!selectedRoutine||!window.confirm('저장된 루틴을 삭제할까요? 관리 체크리스트와 기록은 유지돼요.'))return;
+   persistRoutines(routines.filter(r=>r.id!==selectedRoutine));setSelectedRoutine('');setRoutineName('');
+ };
  const total=steps.reduce((n,s)=>n+s.seconds,0),elapsed=finished?total:steps.slice(0,index).reduce((n,s)=>n+s.seconds,0)+(selected?selected.seconds-remaining:0);
  const radius=96,circ=2*Math.PI*radius;
  return <div className="careTimer">
    <div className="seg manageTabs">{categories.map(([id,name])=><button type="button" key={id} className={category===id?'active':''} onClick={()=>setCategory(id)}>{name}</button>)}</div>
-   <section className="contentSection"><div className="sectionTitle"><strong>관리 루틴</strong><span>{steps.length}개 항목 · 총 {fmt(total)}</span></div>
+   <section className="contentSection">
+     <div className="careTimerSaved">
+       <select aria-label="저장된 루틴 선택" value={selectedRoutine} onChange={e=>chooseRoutine(e.target.value)}>
+         <option value="">새 루틴 · 저장된 루틴 선택</option>
+         {routines.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
+       </select>
+     </div>
+     <div className="sectionTitle"><strong>관리 루틴</strong><span>{steps.length}개 항목 · 총 {fmt(total)}</span></div>
      <p className="careTimerHint">관리 탭의 체크리스트와 연결돼요. 완료한 항목은 선택한 날짜에 자동으로 체크됩니다.</p>
      {list.length?<div className="careTimerPicker">{list.map(item=><div className="careTimerPickRow" key={item.id}>
        <label><input type="checkbox" checked={settings[item.id]?.enabled!==false} onChange={e=>updateSetting(item.id,{enabled:e.target.checked})}/><span>{item.label}</span></label>
        <input aria-label={item.label+' 타이머 초'} type="number" inputMode="numeric" min="5" max="3600" value={settings[item.id]?.seconds??300} onChange={e=>updateSetting(item.id,{seconds:Math.max(5,Math.min(3600,Number(e.target.value)||5))})}/><small>초</small>
      </div>)}</div>:<p className="careTimerHint">관리 → {categories.find(x=>x[0]===category)?.[1]}에서 체크리스트 항목을 먼저 추가해 주세요.</p>}
+     <div className="careTimerSaveRow">
+       <input aria-label="루틴 이름" placeholder="루틴 이름 (예: 아침 얼굴 관리 15분)" value={routineName} onChange={e=>setRoutineName(e.target.value)} />
+       <button className="careTimerSaveButton" type="button" disabled={!steps.length||!routineName.trim()} onClick={saveRoutine}><Save size={17}/> 저장</button>
+       {selectedRoutine&&<button className="careTimerDeleteButton" type="button" onClick={deleteRoutine} aria-label="저장된 루틴 삭제"><Trash2 size={18}/></button>}
+     </div>
    </section>
    {!!steps.length&&<section className="contentSection">
     <div className="careTimerPie"><svg viewBox="0 0 240 240" aria-label="단계별 원형 타이머">
