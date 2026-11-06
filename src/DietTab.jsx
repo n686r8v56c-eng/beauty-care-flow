@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useState} from 'react';
-import {ChevronLeft,ChevronRight,Plus,X,Moon,Sun,Check,Settings2} from 'lucide-react';
+import {ChevronLeft,ChevronRight,Plus,X,Pencil,Moon,Sun,Check,Settings2} from 'lucide-react';
 import './DietTab.css';
 import {DietAnalytics,DietReview} from './DietInsights.jsx';
 
