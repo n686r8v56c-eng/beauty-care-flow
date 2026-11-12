@@ -1,3 +1,4 @@
+import ClosetChecklists from './hairs/ClosetChecklists.jsx';
 import React,{useEffect,useRef,useState} from 'react';
 import {Plus,Search,LayoutGrid,List,Trash2,Pin,ExternalLink,ImagePlus} from 'lucide-react';
 import './HairS.css';
@@ -21,11 +22,13 @@ return <section className="hairs"><h1>HairS</h1><div className="hairs-tabs">{[['
 {tab==='skills'?<p className="hairs-empty">기술 라이브러리는 다음 단계에서 구성할게요.</p>:<>
 {tab==='inbox'&&<div className="hairs-tabs secondary">{[['photo','사진'],['check','체크리스트']].map(([id,name])=><button key={id} className={sub===id?'active':''} onClick={()=>setSub(id)}>{name}</button>)}</div>}
 {tab==='collect'&&<form className="hairs-add" onSubmit={addLink}><input value={link} onChange={e=>setLink(e.target.value)} placeholder="유튜브 · 인스타그램 링크 붙여넣기"/><button type="submit"><Plus size={17}/> 수집</button></form>}
-{tab==='inbox'&&sub==='check'&&<form className="hairs-add" onSubmit={e=>{e.preventDefault();const v=e.currentTarget.elements.text.value.trim();if(!v)return;save({id:uuid(),userId,type:'checklist',title:v,done:false,created:Date.now()});e.currentTarget.reset()}}><input name="text" placeholder="체크리스트 항목 추가"/><button type="submit"><Plus size={17}/> 추가</button></form>}
+{tab==='inbox'&&sub==='check'&&<ClosetChecklists userId={userId}/>}
+{!(tab==='inbox'&&sub==='check')&&<>
 <div className="hairs-search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==='collect'?'제목 · 태그 · 링크 검색':'태그 · 사진 검색'}/>{query&&<button onClick={()=>setQuery('')}>×</button>}</div>
 <div className="hairs-toolbar"><span>{filtered.length}개</span>{tab==='inbox'&&sub==='photo'&&<div className="hairs-switch"><button aria-label="갤러리뷰" className={view==='gallery'?'active':''} onClick={()=>setView('gallery')}><LayoutGrid size={19}/></button><button aria-label="목록뷰" className={view==='list'?'active':''} onClick={()=>setView('list')}><List size={19}/></button></div>}</div>
 <div className={tab==='inbox'&&sub==='photo'&&view==='gallery'?'hairs-gallery':'hairs-list'}>{filtered.map(r=><article key={r.id} className="hairs-card">{r.type==='photo'?<div className="hairs-image" onContextMenu={e=>{e.preventDefault();save({...r,pinned:!r.pinned})}} onTouchStart={e=>{e.currentTarget.dataset.timer=String(window.setTimeout(()=>save({...r,pinned:!r.pinned}),650))}} onTouchEnd={e=>clearTimeout(Number(e.currentTarget.dataset.timer))} onTouchMove={e=>clearTimeout(Number(e.currentTarget.dataset.timer))}><Photo blob={r.blob} alt={r.title}/>{r.pinned&&<Pin className="hairs-pin" size={18}/>}</div>:null}
 {!(r.type==='photo'&&view==='gallery'&&tab==='inbox')&&<div className="hairs-info">{r.type==='checklist'?<label><input type="checkbox" checked={!!r.done} onChange={e=>save({...r,done:e.target.checked})}/>{r.title}</label>:<><input aria-label="제목" value={r.title||''} placeholder="제목 입력" onChange={e=>setRows(old=>old.map(x=>x.id===r.id?{...x,title:e.target.value}:x))} onBlur={e=>save({...r,title:e.target.value})}/>{r.url&&<a href={r.url} target="_blank" rel="noopener noreferrer"><ExternalLink size={14}/> 원본 링크</a>}<input aria-label="태그" value={(r.tags||[]).join(', ')} placeholder="+ 태그 추가" onChange={e=>setRows(old=>old.map(x=>x.id===r.id?{...x,tags:tagsOf(e.target.value)}:x))} onBlur={e=>save({...r,tags:tagsOf(e.target.value)})}/></>}<button className="hairs-delete" aria-label="삭제" onClick={()=>remove(r)}><Trash2 size={16}/></button></div>}</article>)}</div>
 {!filtered.length&&<p className="hairs-empty">저장된 항목이 없어요.</p>}
+</>}
 {tab==='inbox'&&sub==='photo'&&<label className="hairs-float"><Plus size={19}/> 사진 추가<input type="file" accept="image/*" multiple disabled={busy} onChange={upload}/></label>}
 </>}{error&&<p className="hairs-error" role="alert">{error}</p>}</section>}
