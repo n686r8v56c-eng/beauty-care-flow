@@ -3,3 +3,37 @@
 .closet-checklist-items label.closet-checklist-subtask{margin-left:28px;padding-left:12px;border-left:2px solid #e5d9f1;color:#766682}.closet-checklist-items label.closet-checklist-subtask span{font-size:15px}
 
 .closet-checklist-items label.closet-checklist-subsubtask{margin-left:56px;padding-left:12px;border-left:2px solid #d4c0e8;color:#766682}.closet-checklist-items label.closet-checklist-subsubtask span{font-size:14px}
+
+.closet-checklist-photo{flex:0 0 auto;display:flex;align-items:center}
+.closet-checklist-photo-picker{position:relative;display:grid;place-items:center;width:54px;height:58px;border:1px dashed #d7c5e8;border-radius:9px;overflow:hidden;background:#faf7fc;color:#a28bb5;cursor:pointer;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.closet-checklist-photo-picker img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.closet-checklist-photo-picker>span{display:grid;text-align:center;gap:1px;font-size:10px}
+.closet-checklist-photo-picker small{font-size:17px;line-height:1}
+.closet-checklist-photo-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+.closet-checklist-row{min-width:0}
+.closet-checklist-item{display:flex;align-items:center;gap:9px;min-width:0}
+.closet-checklist-items .closet-checklist-item>label{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.closet-checklist-items .closet-checklist-item .closet-checklist-photo-picker{width:42px;height:46px}
+.closet-checklist-items .closet-checklist-item.closet-checklist-subtask{margin-left:28px;padding-left:12px;border-left:2px solid #e5d9f1}
+.closet-checklist-items .closet-checklist-item.closet-checklist-subsubtask{margin-left:56px;padding-left:12px;border-left:2px solid #d4c0e8}
+.closet-checklist-zoom{position:fixed;inset:0;z-index:5000;background:#100b18eb;display:flex;align-items:center;justify-content:center;padding:48px 16px}
+.closet-checklist-zoom img{max-width:100%;max-height:85dvh;object-fit:contain;border-radius:10px}
+.closet-checklist-zoom>button{position:absolute;top:max(20px,env(safe-area-inset-top));right:16px;border:0;border-radius:50%;background:#ffffff33;color:#fff;padding:10px}
+
+.closet-checklist-items .closet-checklist-item>label{flex:0 0 auto;display:flex;align-items:center;margin:0}
+.closet-checklist-item-link{flex:1;min-width:0;text-align:left;display:flex;align-items:center;gap:6px;border:0;background:transparent;padding:5px 0;color:#342c3d;font:inherit;font-size:16px;overflow-wrap:anywhere;cursor:pointer;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.closet-checklist-item-link svg{flex-shrink:0;color:#8e6dbb}
+.closet-checklist-item-link.done{text-decoration:line-through;color:#a99caf}
+.closet-checklist-item.closet-checklist-subtask .closet-checklist-item-link{font-size:15px}
+.closet-checklist-item.closet-checklist-subsubtask .closet-checklist-item-link{font-size:14px}
+.closet-checklist-link-input{width:100%;box-sizing:border-box;border:1px solid #dfd2ed;border-radius:11px;padding:12px;font-size:16px}
+
+.closet-checklist-photo-count{position:absolute;right:2px;bottom:2px;background:#342744d9;color:white;font-size:10px;padding:1px 4px;border-radius:5px;pointer-events:none;z-index:1}
+.closet-checklist-gallery{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:100%;max-height:90dvh}
+.closet-checklist-gallery>img{max-width:100%;max-height:68dvh;object-fit:contain;border-radius:10px}
+.closet-checklist-gallery-nav{display:flex;align-items:center;gap:14px;color:white;font-size:15px}
+.closet-checklist-gallery-nav button,.closet-checklist-gallery-cover{background:white;color:#7653a2;border:0;border-radius:10px;padding:11px 14px;font-size:14px;font-weight:700}
+.closet-checklist-gallery-nav button:disabled,.closet-checklist-gallery-cover:disabled{opacity:.55}
+
+/* Center the empty photo placeholder plus sign */
+.closet-checklist-photo-picker>span:not(.closet-checklist-photo-count){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:24px;font-weight:400;line-height:1;pointer-events:none}
