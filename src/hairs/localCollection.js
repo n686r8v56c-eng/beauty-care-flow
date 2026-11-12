@@ -1,0 +1,6 @@
+import {useMemo} from 'react';
+const DB='beauty-hairs-copy-v1',STORE='items';const listeners=new Map();
+function open(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE,{keyPath:'key'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function op(mode,fn){const db=await open();try{return await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,mode),r=fn(tx.objectStore(STORE));r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);tx.onerror=()=>reject(tx.error)})}finally{db.close()}}
+const emit=name=>{for(const f of listeners.get(name)||[])f()};
+export function useLocalCollection(name){return useMemo(()=>({read:async()=>{const rows=await op('readonly',s=>s.getAll());return rows.filter(x=>x.collection===name).map(x=>x.data)},write:async row=>{await op('readwrite',s=>s.put({key:name+':'+row.id,collection:name,data:row}));emit(name)},remove:async id=>{await op('readwrite',s=>s.delete(name+':'+id));emit(name)},subscribe:fn=>{if(!listeners.has(name))listeners.set(name,new Set());listeners.get(name).add(fn);return()=>listeners.get(name)?.delete(fn)}}),[name])}
