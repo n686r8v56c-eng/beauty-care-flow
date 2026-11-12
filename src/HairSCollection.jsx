@@ -91,7 +91,7 @@ function CollectionCard({item,onUpdate,onDelete}){
 export default function HairSCollection({userId}){
  const read=()=>operate('readonly','getAll');const save=row=>operate('readwrite','put',row);const remove=id=>operate('readwrite','delete',id);
  const [url,setUrl]=useState(''),[search,setSearch]=useState(''),[items,setItems]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
- async function reload(){setItems((await read()||[]).filter(x=>(genre==='closet'?['fashion','closet'].includes(x.genre||'fashion'):(x.genre||'fashion')===genre)).sort((a,b)=>b.createdAt-a.createdAt))}
+ async function reload(){setItems((await read()||[]).filter(x=>x.userId===userId&&x.type==='link').sort((a,b)=>(b.createdAt||b.created||0)-(a.createdAt||a.created||0)))}
  useEffect(()=>{const refresh=()=>reload().catch(e=>setError('저장 기록을 읽지 못했어: '+e.message));refresh()},[userId]);
  async function add(e){
   e.preventDefault();setError('');setNotice('');
