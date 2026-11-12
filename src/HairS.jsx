@@ -1,3 +1,4 @@
+import HairSCollection from './HairSCollection.jsx';
 import ClosetChecklists from './hairs/ClosetChecklists.jsx';
 import React,{useEffect,useRef,useState} from 'react';
 import {Plus,Search,LayoutGrid,List,Trash2,Pin,ExternalLink,ImagePlus,Copy,ClipboardPaste,X,ChevronLeft,ChevronRight} from 'lucide-react';
@@ -25,9 +26,9 @@ const filtered=rows.filter(r=>(tab==='inbox'?(sub==='photo'?r.type==='photo':r.t
 return <section className="hairs"><h1>HairS</h1><div className="hairs-tabs">{[['inbox','인박스'],['collect','수집'],['skills','기술']].map(([id,name])=><button key={id} className={tab===id?'active':''} onClick={()=>{setTab(id);setQuery('')}}>{name}</button>)}</div>
 {tab==='skills'?<p className="hairs-empty">기술 라이브러리는 다음 단계에서 구성할게요.</p>:<>
 {tab==='inbox'&&<div className="hairs-tabs secondary">{[['photo','사진'],['check','체크리스트']].map(([id,name])=><button key={id} className={sub===id?'active':''} onClick={()=>setSub(id)}>{name}</button>)}</div>}
-{tab==='collect'&&<form className="hairs-add" onSubmit={addLink}><input value={link} onChange={e=>setLink(e.target.value)} placeholder="유튜브 · 인스타그램 링크 붙여넣기"/><button type="submit"><Plus size={17}/> 수집</button></form>}
+{tab==='collect'&&<HairSCollection userId={userId}/>}
 {tab==='inbox'&&sub==='check'&&<ClosetChecklists userId={userId}/>}
-{!(tab==='inbox'&&sub==='check')&&<>
+{tab==='inbox'&&sub==='photo'&&<>
 <div className="hairs-search"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==='collect'?'제목 · 태그 · 링크 검색':'태그 · 사진 검색'}/>{query&&<button onClick={()=>setQuery('')}>×</button>}</div>
 <div className="hairs-toolbar"><span>{filtered.length}개</span>{tab==='inbox'&&sub==='photo'&&<div className="hairs-switch"><button aria-label="갤러리뷰" className={view==='gallery'?'active':''} onClick={()=>setView('gallery')}><LayoutGrid size={19}/></button><button aria-label="목록뷰" className={view==='list'?'active':''} onClick={()=>setView('list')}><List size={19}/></button></div>}</div>
 <div className={tab==='inbox'&&sub==='photo'&&view==='gallery'?'hairs-gallery':'hairs-list'}>{filtered.map(r=><article key={r.id} className="hairs-card">{r.type==='photo'?<div className="hairs-image" onContextMenu={e=>{e.preventDefault();save({...r,pinned:!r.pinned})}} onTouchStart={e=>{e.currentTarget.dataset.timer=String(window.setTimeout(()=>save({...r,pinned:!r.pinned}),650))}} onTouchEnd={e=>clearTimeout(Number(e.currentTarget.dataset.timer))} onTouchMove={e=>clearTimeout(Number(e.currentTarget.dataset.timer))} onClick={()=>{setPreviewId(r.id);setPreviewIndex(r.coverIndex||0)}}><Photo blob={r.blob} alt={r.title}/>{imageBlobs(r).length>1&&<span className="hairs-count">{imageBlobs(r).length}장</span>}{r.pinned&&<Pin className="hairs-pin" size={18}/>}</div>:null}
