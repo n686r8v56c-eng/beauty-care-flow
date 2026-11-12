@@ -21,7 +21,7 @@ const canonicalize=raw=>{try{
  }
  return null;
 }catch{return null}};
-const thumbFor=(row)=>row.manualThumbnail||row.thumbnail||'';
+const thumbFor=(row)=>{if(row.manualThumbnail||row.thumbnail)return row.manualThumbnail||row.thumbnail;try{const u=new URL(row.url);const id=u.hostname.includes('youtu.be')?u.pathname.split('/')[1]:u.searchParams.get('v')||u.pathname.match(/\/(?:shorts|live)\/([\w-]{11})/)?.[1];return /^[\w-]{11}$/.test(id||'')?'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg':''}catch{return ''}};
 const parseTags=text=>[...new Set(String(text||'').split(/[,\n#]+/).map(t=>t.trim().replace(/^#+/,'').slice(0,40)).filter(Boolean))].slice(0,20);
 async function resize(file){
  if(!file.type.startsWith('image/'))throw Error('사진 파일만 올릴 수 있어.');
@@ -126,6 +126,6 @@ export default function HairSCollection({userId}){
   <div className="collect-list">{filtered.map(item=><CollectionCard key={item.id} item={item} onUpdate={update} onDelete={del}/>)}</div>
   {!items.length&&<p className="collect-empty">링크를 하나 붙여넣으면 여기에 쌓여 💜</p>}
   {items.length>0&&filtered.length===0&&<p className="collect-empty">검색 결과가 없어.</p>}
-  <p className="collect-foot">YouTube 제목은 공개 정보를 사용하고, YouTube와 Instagram 모두 태그를 직접 붙일 수 있어. Instagram도 제목을 직접 입력할 수 있고 썸네일을 수동 등록할 수 있어. 수집 링크와 수동 사진은 기기에 먼저 저장되고 변경분만 동기화돼.</p>
+  <p className="collect-foot">YouTube 제목은 공개 정보를 사용하고, YouTube와 Instagram 모두 태그를 직접 붙일 수 있어. Instagram도 제목을 직접 입력할 수 있고 썸네일을 수동 등록할 수 있어. 수집 링크와 수동 사진은 현재 이 기기의 IndexedDB에 저장돼. 다른 기기와 자동 동기화되지는 않아.</p>
  </section>
 }
