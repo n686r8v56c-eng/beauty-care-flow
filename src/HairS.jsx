@@ -1,4 +1,5 @@
 import HairSCollection from './HairSCollection.jsx';
+import HairSVideoInbox from './HairSVideoInbox.jsx';
 import ClosetChecklists from './hairs/ClosetChecklists.jsx';
 import React,{useEffect,useRef,useState} from 'react';
 import {Plus,Search,LayoutGrid,List,Trash2,Pin,ExternalLink,ImagePlus,Copy,ClipboardPaste,X,ChevronLeft,ChevronRight} from 'lucide-react';
@@ -24,7 +25,7 @@ function addTag(r){const tags=tagsOf(tagDraft);if(tags.length)save({...r,tags:[.
 async function addLink(e){e.preventDefault();const raw=link.trim();if(!raw)return;let url;try{url=new URL(raw);if(!['https:','http:'].includes(url.protocol))throw Error()}catch{setError('올바른 링크를 입력해 주세요');return}await save({id:uuid(),userId,type:'link',url:url.href,title:'',tags:[],created:Date.now()});setLink('')}
 const filtered=rows.filter(r=>(tab==='inbox'?(sub==='photo'?r.type==='photo':r.type==='checklist'):r.type==='link')&&[r.title,r.url,...(r.tags||[])].join(' ').toLowerCase().includes(query.toLowerCase())).sort((a,b)=>Number(!!b.pinned)-Number(!!a.pinned)||b.created-a.created);
 return <section className="hairs"><h1>HairS</h1><div className="hairs-tabs">{[['inbox','인박스'],['collect','수집'],['skills','기술']].map(([id,name])=><button key={id} className={tab===id?'active':''} onClick={()=>{setTab(id);setQuery('')}}>{name}</button>)}</div>
-{tab==='skills'?<p className="hairs-empty">기술 라이브러리는 다음 단계에서 구성할게요.</p>:<>
+{tab==='skills'?<HairSVideoInbox userId={userId}/>:<>
 {tab==='inbox'&&<div className="hairs-tabs secondary">{[['photo','사진'],['check','체크리스트']].map(([id,name])=><button key={id} className={sub===id?'active':''} onClick={()=>setSub(id)}>{name}</button>)}</div>}
 {tab==='collect'&&<HairSCollection userId={userId}/>}
 {tab==='inbox'&&sub==='check'&&<ClosetChecklists userId={userId}/>}
