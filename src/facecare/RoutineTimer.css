@@ -1,0 +1,90 @@
+.face-care .routine-root{border:1px solid #e6daf1;border-radius:17px;margin:14px 0 22px;padding:13px;background:#faf7fd;color:#342b40}.face-care .routine-heading,.face-care .routine-top,.face-care .routine-pickhead{display:flex;align-items:center;justify-content:space-between;gap:9px}.face-care .routine-heading strong{font-size:17px}.face-care .routine-root button{display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;border:1px solid #ded1ea;background:white;border-radius:10px;color:#7855a8;padding:9px 11px;font-size:13px}.face-care .routine-heading button{border:0;background:transparent}.face-care .routine-top{margin-top:14px}.face-care .routine-root select,.face-care .routine-root input:not([type=checkbox]){min-width:0;border:1px solid #ded1ea;border-radius:10px;padding:9px;background:white;color:#342b40;font-size:15px}.face-care .routine-top select{flex:1}.face-care .routine-root .routine-purple{background:#8865b9;color:white;border-color:#8865b9;font-weight:600}.face-care .routine-root button:disabled{opacity:.45}.face-care .routine-picker{background:white;border:1px solid #e6daf1;border-radius:13px;margin-top:12px;padding:11px;max-height:410px;overflow:auto}.face-care .routine-picker .routine-pickhead{position:sticky;top:-11px;background:white;padding:7px 0}.face-care .routine-source{border-top:1px solid #eee7f3;padding:11px 2px}.face-care .routine-source strong{display:block;font-size:13px}.face-care .routine-source label{display:flex;align-items:center;gap:8px;margin-top:10px;padding-left:3px;font-size:13px;cursor:pointer}.face-care .routine-source label a{margin-left:auto;color:#8061aa}.face-care .routine-root input[type=checkbox]{accent-color:#8563bb;width:17px;height:17px}.face-care .routine-finish{width:100%;margin-top:10px}.face-care .routine-player{padding-top:6px}.face-care .routine-pie{width:min(255px,100%);margin:0 auto}.face-care .routine-pie svg{display:block;width:100%;height:auto;overflow:visible}.face-care .routine-current{text-align:center;display:flex;flex-direction:column;gap:4px}.face-care .routine-current strong{font-size:20px}.face-care .routine-current small{font-size:12px;color:#8a7b99}.face-care .routine-controls{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin:17px 0}.face-care .routine-options{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:12px;color:#736581;padding-bottom:12px}.face-care .routine-options label{display:flex;gap:5px;align-items:center}.face-care .routine-step-list{display:flex;flex-direction:column;gap:6px}.face-care .routine-step{display:flex;gap:7px;align-items:center;padding:9px;border-radius:10px;background:white;border:1px solid #eee8f2;cursor:pointer}.face-care .routine-step.active{border-color:#b594d7;background:#f3ebfa}.face-care .routine-step i{width:11px;height:11px;border-radius:4px;flex-shrink:0}.face-care .routine-step span{flex:1;min-width:0;word-break:break-word;font-size:13px}.face-care .routine-step input{width:62px!important;flex-shrink:0;padding:5px!important;text-align:right}.face-care .routine-step small{color:#83768e}.face-care .routine-step a{color:#8061aa;display:flex;padding:4px}.face-care .routine-save{display:flex;gap:7px;margin-top:14px}.face-care .routine-save input{flex:1}.face-care .routine-save button{flex-shrink:0}@media(max-width:380px){.face-care .routine-root{padding:9px}.face-care .routine-top{flex-wrap:wrap}.face-care .routine-top select{width:100%;flex-basis:100%}.face-care .routine-save{flex-wrap:wrap}.face-care .routine-save input{width:100%;flex-basis:100%}}
+/* Timer tab palettes */
+.face-care .routine-face{--routine-accent:#8263c0;--routine-border:#ddd0ec;--routine-tint:#f5effc}
+.face-care .routine-voice{--routine-accent:#38a996;--routine-border:#c2e6df;--routine-tint:#eaf9f4}
+.face-care .routine-root.routine-face,.face-care .routine-root.routine-voice{background:var(--routine-tint);border-color:var(--routine-border);margin-top:8px}
+.face-care .routine-root.routine-voice button:not(.routine-purple){color:#288e80;border-color:var(--routine-border)}
+.face-care .routine-root.routine-voice .routine-purple,.face-care .routine-root.routine-face .routine-purple{background:var(--routine-accent);border-color:var(--routine-accent);color:white}
+.face-care .routine-root.routine-voice input[type=checkbox]{accent-color:#38a996}
+.face-care .routine-root.routine-voice .routine-step.active{border-color:#69bdb3;background:#dff5ef}
+.face-care .body-timer-page{max-width:680px;margin:auto}.face-care .body-timer-title{margin:5px 0 17px;font-size:25px}.face-care .body-timer-subtabs{display:flex;gap:9px;margin-bottom:14px}.face-care .body-timer-subtabs button{flex:1;border:1px solid #e6ddec;padding:12px;border-radius:13px;font-size:16px;font-weight:650;background:white;color:#7a7185}.face-care .body-timer-subtabs .active.face{background:#eee5fa;color:#7955b4;border-color:#ad8ad8}.face-care .body-timer-subtabs .active.voice{background:#e4f8f1;color:#238e7e;border-color:#78cbb7}
+
+/* Embedded reference player for the selected routine step. */
+.face-care .routine-step-wrapper{border-radius:12px;overflow:hidden}
+.face-care .routine-step-wrapper .routine-step{border-radius:10px}
+.face-care .routine-embedded-video{margin:8px 0 12px;padding:8px;border:1px solid var(--routine-border,#ddd0ec);border-radius:13px;background:#fff}
+.face-care .routine-embedded-video iframe{display:block;width:100%;aspect-ratio:16/9;height:auto;min-height:170px;border:0;border-radius:9px;background:#201d27}
+
+/* Current-step details centered inside the segmented pie */
+.face-care .routine-pie{position:relative;width:min(290px,100%);margin:0 auto}
+.face-care .routine-pie-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:38px 57px;pointer-events:none;gap:4px;color:#342b40}
+.face-care .routine-pie-label{font-size:11px;color:#8a7b99;line-height:1.25}
+.face-care .routine-pie-title{font-size:16px;font-weight:750;line-height:1.2;max-width:165px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere;margin:2px 0 4px}
+.face-care .routine-pie-time{font-size:34px;line-height:1.05;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--routine-accent)}
+.face-care .routine-pie-meta{font-size:10px;color:#85768f;line-height:1.25;font-variant-numeric:tabular-nums}
+.face-care .routine-pie-total{font-size:11px;font-weight:650;color:#70627e;margin-top:5px;font-variant-numeric:tabular-nums}
+.face-care .routine-voice .routine-pie-total{color:#337d74}
+@media(max-width:380px){.face-care .routine-pie{width:min(265px,100%)}.face-care .routine-pie-center{padding:36px 50px}.face-care .routine-pie-title{font-size:14px}.face-care .routine-pie-time{font-size:31px}}
+
+/* Collapsible Lv.1–5 picker and top completion action */
+.face-care .routine-root .routine-finish-top{background:#dfcef6;border-color:#c7abeb;color:#65449b;font-weight:700}
+.face-care .routine-voice .routine-finish-top{background:#bcebe1;border-color:#8bd5c6;color:#167d6c;font-weight:700}
+.face-care .routine-level{border-top:1px solid #eee7f3}
+.face-care .routine-root .routine-level-toggle{width:100%;display:flex;justify-content:flex-start;gap:10px;align-items:center;padding:13px 5px;background:transparent;border:0;border-radius:0;color:#3b3047;font-size:14px;text-align:left}
+.face-care .routine-level-toggle strong{font-size:15px}
+.face-care .routine-level-toggle span{flex:1;color:#85758f;font-size:12px;text-align:right}
+.face-care .routine-level-toggle svg{flex-shrink:0;transition:transform .16s ease}
+.face-care .routine-chevron-open{transform:rotate(180deg)}
+.face-care .routine-level-content{padding:0 4px 12px 15px}
+.face-care .routine-level-content .routine-source:first-child{border-top:0}
+.face-care .routine-level-content .routine-source{padding:10px 2px}
+.face-care .routine-level-content p{color:#8a7b99;font-size:12px}
+
+/* Live timer synchronization and explicit device handoff */
+.face-care .routine-sync-status{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:12px 0;padding:9px 11px;border:1px solid var(--routine-border);border-radius:12px;background:#fff;font-size:12px;color:#807289}
+.face-care .routine-sync-status span{min-width:0;line-height:1.4}
+.face-care .routine-root .routine-sync-status button{font-weight:700;color:var(--routine-accent);white-space:nowrap;padding:7px 9px}
+
+/* Upper / Lower Timer: Circulation Lavender, Strength Mint, Gym Butter Yellow */
+.face-care .routine-circulation{--routine-accent:#9875c5;--routine-border:#dfd1ee;--routine-tint:#f5f0fb}
+.face-care .routine-strength{--routine-accent:#39ac99;--routine-border:#c6e7df;--routine-tint:#edf9f5}
+.face-care .routine-gym{--routine-accent:#c5a039;--routine-border:#efdfad;--routine-tint:#fff9e8}
+.face-care .routine-root.routine-circulation,.face-care .routine-root.routine-strength,.face-care .routine-root.routine-gym{
+ background:var(--routine-tint);border-color:var(--routine-border);margin-top:8px;
+}
+.face-care .routine-root.routine-circulation .routine-purple,.face-care .routine-root.routine-strength .routine-purple,.face-care .routine-root.routine-gym .routine-purple{
+ background:var(--routine-accent);border-color:var(--routine-accent);color:#fff;
+}
+.face-care .routine-root.routine-gym .routine-purple{color:#2f2713}
+.face-care .routine-root.routine-circulation button:not(.routine-purple):not(.routine-finish-top),
+.face-care .routine-root.routine-strength button:not(.routine-purple):not(.routine-finish-top),
+.face-care .routine-root.routine-gym button:not(.routine-purple):not(.routine-finish-top){
+ border-color:var(--routine-border);color:var(--routine-accent);
+}
+.face-care .routine-root.routine-circulation input[type=checkbox]{accent-color:#9875c5}
+.face-care .routine-root.routine-strength input[type=checkbox]{accent-color:#39ac99}
+.face-care .routine-root.routine-gym input[type=checkbox]{accent-color:#c5a039}
+.face-care .routine-circulation .routine-step.active{border-color:#b69bd8;background:#eee3f8}
+.face-care .routine-strength .routine-step.active{border-color:#8cd1c4;background:#e0f4ef}
+.face-care .routine-gym .routine-step.active{border-color:#e2c96c;background:#fcf0c8}
+.face-care .routine-root.routine-circulation .routine-finish-top{background:#e1d1f4;border-color:#c9abed;color:#6f4a9f}
+.face-care .routine-root.routine-strength .routine-finish-top{background:#c5f0e6;border-color:#8dd3c4;color:#187e70}
+.face-care .routine-root.routine-gym .routine-finish-top{background:#faedbd;border-color:#ead680;color:#8b6b20}
+.face-care .body-timer-subtabs .active.circulation{background:#efe5fa;color:#7752ae;border-color:#b99adb}
+.face-care .body-timer-subtabs .active.strength{background:#e2f7f0;color:#248c7a;border-color:#83cdbd}
+.face-care .body-timer-subtabs .active.gym{background:#fff5d6;color:#98751d;border-color:#e8d17a}
+
+/* Compact step accordions shared by Face / Voice / Upper / Lower timers */
+.face-care .routine-list-accordion{margin:10px 0;border:1px solid var(--routine-border,#e4d8ee);border-radius:15px;background:#fff;overflow:hidden;box-shadow:0 2px 12px rgba(74,49,95,.04)}
+.face-care .routine-root .routine-list-toggle{display:flex;align-items:center;justify-content:stretch;width:100%;gap:11px;border:0;border-radius:0;padding:13px 14px;text-align:left;background:#fff;color:#46344e}
+.face-care .routine-list-icon{display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--routine-tint,#f4edfb);width:35px;height:35px;color:var(--routine-accent,#8968b4);flex-shrink:0}
+.face-care .routine-list-heading{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.face-care .routine-list-heading strong{font-size:14px;font-weight:750}
+.face-care .routine-list-heading small{font-size:12px;color:#8e7d9d}
+.face-care .routine-list-toggle>svg,.face-care .routine-video-toggle>svg:last-child{transition:transform .18s ease;flex-shrink:0}
+.face-care .routine-list-accordion .routine-step-list{padding:0 10px 11px;gap:7px}
+.face-care .routine-list-accordion .routine-step{min-height:48px;border-radius:11px;padding:9px 11px}
+.face-care .routine-video-accordion{margin:6px 0 10px}
+.face-care .routine-root .routine-video-toggle{width:100%;justify-content:flex-start;border:1px solid var(--routine-border,#ddd0ec);background:var(--routine-tint,#f5f0fb);border-radius:11px;padding:10px 12px;color:var(--routine-accent,#8665b5);font-size:13px;font-weight:650}
+.face-care .routine-video-toggle span{flex:1;text-align:left}
+.face-care .routine-video-accordion .routine-embedded-video{margin:7px 0 0}

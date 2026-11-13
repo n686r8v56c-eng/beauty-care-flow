@@ -1,0 +1,7 @@
+// Independent Beauty Care storage. Never reads Body Care's database or browser keys.
+const DB='beauty-face-care-v1';
+async function open(){return new Promise((resolve,reject)=>{const request=indexedDB.open(DB,1);request.onupgradeneeded=()=>{request.result.createObjectStore('records');request.result.createObjectStore('photos')};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}
+async function access(store,mode,key,value){const db=await open();try{return await new Promise((resolve,reject)=>{const tx=db.transaction(store,mode);const request=mode==='readonly'?tx.objectStore(store).get(key):tx.objectStore(store).put(value,key);tx.oncomplete=()=>resolve(request.result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}}
+export const loadFace=user=>access('records','readonly',user);
+export const saveFace=(user,data)=>access('records','readwrite',user,data);
+export function photoStorage(){const urls=new Map();return {storage:{from:()=>({upload:async(path,file)=>{try{await access('photos','readwrite',path,file);return {error:null}}catch(error){return {error}}},createSignedUrl:async path=>{try{if(!urls.has(path)){const blob=await access('photos','readonly',path);if(!blob)throw Error('사진을 찾을 수 없어요.');urls.set(path,URL.createObjectURL(blob))}return {data:{signedUrl:urls.get(path)},error:null}}catch(error){return {error}}}})},dispose(){for(const url of urls.values())URL.revokeObjectURL(url);urls.clear()}}}
