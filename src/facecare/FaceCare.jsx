@@ -14,8 +14,8 @@ const sourceData=raw=>{
  if(!raw||!['body-care-studio-v1','body-care-studio-v2'].includes(raw.format)||!Array.isArray(raw.items))throw Error('Body Care Studio v2의 전체 JSON 백업 파일을 선택해 줘.');
  const items=raw.items.filter(x=>x&&x.area==='face'&&careGroups.has(x.group)&&typeof x.id==='string').map(x=>({...x,area:'face'}));
  const validIds=new Set(items.map(x=>x.id));
- const routines=(Array.isArray(raw.routines)?raw.routines:[]).filter(x=>x?.area==='face'&&careGroups.has(x.group)&&typeof x.id==='string'&&Array.isArray(x.steps)).map(x=>({...x,steps:x.steps.filter(st=>st&&typeof st.videoId==='string'&&/^[\\w-]{11}$/.test(st.videoId)&&(!st.itemId||validIds.has(st.itemId)))}));
- const logs=(Array.isArray(raw.practiceLogs)?raw.practiceLogs:[]).filter(x=>/^\\d{4}-\\d{2}-\\d{2}$/.test(x?.date)).map(x=>({date:x.date,face:Math.max(0,Number(x.face)||0),voice:Math.max(0,Number(x.voice)||0)}));
+ const routines=(Array.isArray(raw.routines)?raw.routines:[]).filter(x=>x?.area==='face'&&careGroups.has(x.group)&&typeof x.id==='string'&&Array.isArray(x.steps)).map(x=>({...x,steps:x.steps.filter(st=>st&&typeof st.videoId==='string'&&/^[\w-]{11}$/.test(st.videoId)&&(!st.itemId||validIds.has(st.itemId)))}));
+ const logs=(Array.isArray(raw.practiceLogs)?raw.practiceLogs:[]).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x?.date)).map(x=>({date:x.date,face:Math.max(0,Number(x.face)||0),voice:Math.max(0,Number(x.voice)||0)}));
  const names=Object.fromEntries(Object.entries(raw.groupNames||{}).filter(([k,v])=>/^face:(massage|stretch|bodyweight|machine)$/.test(k)&&typeof v==='string'));
  const levels=Object.fromEntries(Object.entries(raw.levelNames||{}).filter(([k,v])=>/^face:(massage|stretch|bodyweight|machine)$/.test(k)&&Array.isArray(v)));
  return {items,routines,logs,names,levels,exportedAt:safeString(raw.exportedAt)};
