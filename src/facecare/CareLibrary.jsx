@@ -266,7 +266,7 @@ export function seedBodyCatalog(value){
  return {...value,items,levelNames,beautyCatalogSeedVersion:1,legStretchSeedVersion:Math.max(1,Number(value?.legStretchSeedVersion)||0)};
 }
 export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=false,database=null,userId=null,hideHeading=false}){
- const videoLimit=area==='face'&&group==='massage'?10:MAX;
+ const videoLimit=area==='face'&&group==='massage'?20:MAX;
  const [level,setLevel]=useState(1);
  const [editingMode,setEditingMode]=useState(false);
  const [showDeleted,setShowDeleted]=useState(false);
@@ -429,7 +429,7 @@ export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=fals
    if(!confirm('현재 목록을 보존하면서 새 항목만 추가할까?'))return;
    update(d=>{
     const ids=new Set(d.items.map(x=>x.id));
-    raw.items.forEach(x=>{if(x?.id&&!ids.has(x.id)&&x.area==='face'&&['massage','stretch','bodyweight','machine'].includes(x.group)){d.items.push({...x,level:Number(x.level)||1,archived:!!x.archived,videos:normalizeVideoIds(x.videos,x.group==='massage'?10:MAX),instagramLinks:instagramLinks(x.instagramLinks,x.group==='massage'?10:MAX),instagramThumbnails:x.instagramThumbnails||{}});ids.add(x.id)}});
+    raw.items.forEach(x=>{if(x?.id&&!ids.has(x.id)&&x.area==='face'&&['massage','stretch','bodyweight','machine'].includes(x.group)){d.items.push({...x,level:Number(x.level)||1,archived:!!x.archived,videos:normalizeVideoIds(x.videos,x.group==='massage'?20:MAX),instagramLinks:instagramLinks(x.instagramLinks,x.group==='massage'?20:MAX),instagramThumbnails:x.instagramThumbnails||{}});ids.add(x.id)}});
     d.levelNames={...Object.fromEntries(Object.entries(raw.levelNames||{}).filter(([key])=>key.startsWith('face:'))),...(d.levelNames||{})};
     const routineIds=new Set((d.routines||[]).map(x=>x.id));
     for(const routine of raw.routines||[])if(routine?.id&&routine.area==='face'&&Array.isArray(routine.steps)&&!routineIds.has(routine.id)){d.routines.push(routine);routineIds.add(routine.id)}
