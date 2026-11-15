@@ -11,3 +11,7 @@
 .fl-editor-actions button,.fl-cancel{border:0;border-radius:10px;padding:10px 18px;background:#f1e9fa;color:#7955a0}
 .fl-editor-actions button:last-child{background:#8158ac;color:#fff}
 .fl-cancel{display:block;margin:15px auto 0}
+
+/* Keep memo content below the pin/delete control row, without changing image tiles. */
+.fl-text-tile{padding:46px 12px 12px;box-sizing:border-box;overflow:hidden;align-items:stretch;justify-items:stretch}
+.fl-text-tile span{display:block;min-height:0;max-height:100%;overflow-y:auto;overflow-x:hidden;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;line-height:1.55}
