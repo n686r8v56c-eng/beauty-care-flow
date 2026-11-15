@@ -104,3 +104,7 @@
 .voicebook-theme .fl-parents button.active{color:#237b6e!important}
 .hairs .face-lookbook .fl-parents{margin-bottom:12px;gap:14px}
 .hairs .face-lookbook .fl-parents button{font-size:17px!important}
+
+/* Make the purpose of the second-level add action explicit when a parent is empty. */
+.fl-groups .fl-add-first-group{display:inline-flex;align-items:center;gap:5px;font-size:15px;font-weight:650;color:#8158ac;border:1px dashed #d9c7e8;border-radius:9px;padding:7px 10px;white-space:nowrap}
+.voicebook-theme .fl-groups .fl-add-first-group{color:#218f80;border-color:#bce5d9}
