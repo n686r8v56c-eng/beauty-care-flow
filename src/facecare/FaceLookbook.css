@@ -25,3 +25,15 @@
 .fl-board-title{margin-bottom:13px}
 .fl-board-title button:first-child{font-size:19px}
 .fl-board-scroll{gap:10px}
+
+/* Fashion Flow LOOKBOOK typography and vertical rhythm */
+.face-lookbook{padding:16px 14px 26px}
+.fl-heading{margin:8px 0 24px;gap:12px}
+.fl-heading strong{font-size:26px;font-weight:800;letter-spacing:-.7px;line-height:1.2}
+.fl-heading button{font-size:17px;font-weight:700}
+.fl-groups{gap:17px;margin-bottom:30px;align-items:center}
+.fl-groups button{font-size:19px;font-weight:750;line-height:1.25;letter-spacing:-.4px;color:#a48bb9;padding:0}
+.fl-groups button.active{color:#483054;font-weight:800}
+.fl-board-title{margin-bottom:15px;gap:7px}
+.fl-board-title button:first-child{font-size:19px;font-weight:800;letter-spacing:-.5px;line-height:1.3;padding:0}
+.fl-board-title button:not(:first-child){padding:0}
