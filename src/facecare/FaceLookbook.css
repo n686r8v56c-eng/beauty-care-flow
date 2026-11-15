@@ -61,3 +61,16 @@
 
 /* Restore Fashion Flow-sized active board while retaining a visible next-board peek. */
 .hairs .face-lookbook .fl-board{flex:0 0 min(83vw,390px)}
+
+/* Voicebook uses the Voice practice palette; other books keep purple. */
+.face-lookbook.voicebook-theme{color:#286f66}
+.voicebook-theme .fl-heading button,.voicebook-theme .fl-board-title button{color:#286f66}
+.voicebook-theme .fl-groups button{color:#6a9e95}
+.voicebook-theme .fl-groups button.active{color:#237b6e}
+.voicebook-theme .fl-tile,.voicebook-theme .fl-photo{background:#e6f7f2;color:#218f80}
+.voicebook-theme .fl-text-tile{background:#e6f7f2;color:#286f66}
+.voicebook-theme .fl-pin,.voicebook-theme .fl-remove,.voicebook-theme .fl-check,.voicebook-theme .fl-tools button{border-color:#c6e9e0;color:#218f80}
+.voicebook-theme .fl-pin.active{background:#218f80;color:#fff}
+.voicebook-theme .fl-add-row,.voicebook-theme .fl-add-board{background:#edf9f5;border-color:#a9ddd0;color:#218f80}
+.voicebook-theme .fl-modal h3{color:#286f66}
+.voicebook-theme .fl-choices button{background:#e6f7f2;color:#218f80;border-color:#c6e9e0}
