@@ -21,9 +21,9 @@ export default function FaceLookbook({userId,book='face'}){
  function editText(board,i){setChooser(null);setDraft(board.slots[i]?.type==='text'?board.slots[i].text:'');setEditor({boardId:board.id,index:i})}
  async function saveText(){if(!editor)return;const value=draft.trim();await change(s=>{const b=s.boards.find(b=>b.id===editor.boardId);b.slots[editor.index]=value?{type:'text',text:value}:null});setEditor(null)}
  async function setMeta(board,i,field){let value='';if(field==='link'){try{value=await navigator.clipboard.readText()}catch{value=prompt('링크를 붙여넣어 줘')||''}}else value=prompt('가격을 입력해 줘',board.meta?.[i]?.price||'')||'';if(!value)return;await change(s=>{const b=s.boards.find(x=>x.id===board.id);b.meta=b.meta||{};b.meta[i]={...b.meta[i],[field]:value}})}
- if(!state)return <p>{({voice:'VOICEBOOK',hair:'HAIRBOOK',makeup:'MUBOOK',face:'FACEBOOK'}[book]||'FACEBOOK')} 불러오는 중…</p>;
+ if(!state)return <p>{({voice:'VOICEBOOK',hair:'Hairbook',makeup:'Makeupbook',face:'FACEBOOK'}[book]||'FACEBOOK')} 불러오는 중…</p>;
  return <section className="face-lookbook">
-  <header className="fl-heading"><strong>{book==='voice'?'VOICEBOOK':'FACEBOOK'}</strong><button onClick={()=>setArchived(v=>!v)}><Archive size={21}/> ({state.boards.filter(b=>b.archived).length})</button></header>
+  <header className="fl-heading"><strong>{({voice:'VOICEBOOK',hair:'Hairbook',makeup:'Makeupbook',face:'FACEBOOK'}[book]||'FACEBOOK')}</strong><button onClick={()=>setArchived(v=>!v)}><Archive size={21}/> ({state.boards.filter(b=>b.archived).length})</button></header>
   <div className="fl-groups">{state.groups.map(g=><button key={g.id} className={group===g.id?'active':''} onClick={()=>regularClick(()=>setGroup(g.id))} {...pressHandlers({kind:'group',id:g.id,name:g.name})}>{g.name}</button>)}<button aria-label="상위함 추가" onClick={()=>{const name=prompt('상위함 이름');if(name?.trim())change(s=>s.groups.push({id:crypto.randomUUID(),name:name.trim()}))}}><Plus/></button></div>
   {error&&<p role="alert">{error}</p>}
   <div className="fl-board-scroll">{boards.map(board=><article className="fl-board" key={board.id}>
