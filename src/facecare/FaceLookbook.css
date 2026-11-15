@@ -119,3 +119,13 @@
 .fl-youtube-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#d33;color:white;border-radius:12px;padding:8px 13px;font-size:18px}
 .fl-youtube-open{position:absolute;left:6px;right:6px;bottom:6px;z-index:3;background:#fff!important;border:0;border-radius:8px;padding:5px;color:#8158ac;font-weight:700;font-size:12px}
 .voicebook-theme .fl-youtube-open{color:#218f80}
+
+/* Video card proportions: portrait Shorts, landscape standard YouTube. */
+.fl-tile.fl-short-tile{aspect-ratio:9/16}
+.fl-youtube-preview{display:flex;align-items:center;justify-content:center;width:100%;height:100%;position:relative;overflow:hidden}
+.fl-youtube-preview.is-wide{height:auto;aspect-ratio:16/9;align-self:center}
+.fl-youtube-preview.is-wide img{width:100%;height:100%;object-fit:cover}
+.fl-youtube-preview.is-short{height:100%;aspect-ratio:9/16}
+.fl-youtube-preview.is-short img{width:100%;height:100%;object-fit:cover}
+.fl-short-tile .fl-photo{padding-top:34px;padding-bottom:36px;box-sizing:border-box}
+.fl-short-tile .fl-youtube-preview{border-radius:8px}
