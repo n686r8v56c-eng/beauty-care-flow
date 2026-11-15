@@ -58,3 +58,6 @@
 .hairs .face-lookbook .fl-add-board{flex:0 0 88px;width:88px;min-height:120px;align-self:flex-start;margin-top:30px;padding:8px;white-space:normal}
 .hairs .face-lookbook .fl-tiles{gap:7px}
 .hairs .face-lookbook .fl-tile{border-radius:11px}
+
+/* Restore Fashion Flow-sized active board while retaining a visible next-board peek. */
+.hairs .face-lookbook .fl-board{flex:0 0 min(83vw,390px)}
