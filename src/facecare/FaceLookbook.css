@@ -90,3 +90,17 @@
 .fl-slot-link-actions button.has-link{background:#8158ac;color:#fff}
 .voicebook-theme .fl-slot-link-actions button{border-color:#c6e9e0;color:#218f80}
 .voicebook-theme .fl-slot-link-actions button.has-link{background:#218f80;color:#fff}
+
+/* Parent folder navigation: inherit the book palette, never browser default button styling. */
+.fl-parents{display:flex;align-items:center;gap:17px;overflow-x:auto;white-space:nowrap;margin:0 0 13px;padding:0!important;scrollbar-width:none}
+.fl-parents::-webkit-scrollbar{display:none}
+.fl-parents button{appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;gap:4px;border:0!important;border-radius:0;background:transparent!important;box-shadow:none!important;padding:0!important;margin:0!important;font:inherit;font-size:19px!important;line-height:1.3;font-weight:650!important;color:#a48bb9!important;white-space:nowrap;touch-action:pan-x;user-select:none;-webkit-user-select:none}
+.fl-parents button.active{color:#483054!important;font-weight:800!important}
+.fl-parents button svg{width:21px;height:21px}
+.face-lookbook .fl-heading{margin-bottom:17px}
+.face-lookbook .fl-groups{margin-bottom:19px}
+.face-lookbook .fl-board-title{margin-bottom:12px}
+.voicebook-theme .fl-parents button{color:#6a9e95!important}
+.voicebook-theme .fl-parents button.active{color:#237b6e!important}
+.hairs .face-lookbook .fl-parents{margin-bottom:12px;gap:14px}
+.hairs .face-lookbook .fl-parents button{font-size:17px!important}
