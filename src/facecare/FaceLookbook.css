@@ -15,3 +15,13 @@
 /* Keep memo content below the pin/delete control row, without changing image tiles. */
 .fl-text-tile{padding:46px 12px 12px;box-sizing:border-box;overflow:hidden;align-items:stretch;justify-items:stretch}
 .fl-text-tile span{display:block;min-height:0;max-height:100%;overflow-y:auto;overflow-x:hidden;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;line-height:1.55}
+
+/* Compact LOOKBOOK spacing inspired by Fashion Flow. */
+.face-lookbook{padding-top:10px}
+.fl-heading{margin:5px 0 20px;gap:10px}
+.fl-heading strong{font-size:26px;letter-spacing:-.6px;line-height:1.2}
+.fl-groups{gap:17px;margin-bottom:25px;align-items:center}
+.fl-groups button{font-size:19px;line-height:1.25}
+.fl-board-title{margin-bottom:13px}
+.fl-board-title button:first-child{font-size:19px}
+.fl-board-scroll{gap:10px}
