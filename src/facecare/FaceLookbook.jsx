@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {Plus,Pin,Archive,ArchiveRestore,Link2,Copy,X,Type,ImagePlus} from 'lucide-react';
+import {Plus,Pin,Archive,ArchiveRestore,Link2,Copy,X,Type,ImagePlus,Search} from 'lucide-react';
 import {loadFace,saveFace,photoStorage} from './storage.js';
 import './FaceLookbook.css';
 const initial=()=>({groups:[{id:'korea',name:'Korea'},{id:'china',name:'China'}],boards:[{id:'first',group:'korea',name:'보드1',slots:Array(8).fill(null),meta:{},pins:[],checks:[],archived:false}]});
@@ -8,6 +8,7 @@ export default function FaceLookbook({userId,book='face'}){
  const [state,setState]=useState(null),[group,setGroup]=useState('korea'),[archived,setArchived]=useState(false),[urls,setUrls]=useState({}),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const storage=useRef(photoStorage()),files=useRef({});
  const [chooser,setChooser]=useState(null),[editor,setEditor]=useState(null),[draft,setDraft]=useState('');
+ const [searchOpen,setSearchOpen]=useState(false),[searchQuery,setSearchQuery]=useState('');
  const [manage,setManage]=useState(null),longPress=useRef(null),ignoreClick=useRef(false);
  function pressHandlers(target){return {onTouchStart:()=>{clearTimeout(longPress.current);longPress.current=setTimeout(()=>{ignoreClick.current=true;setManage(target)},550)},onTouchEnd:()=>clearTimeout(longPress.current),onTouchCancel:()=>clearTimeout(longPress.current),onTouchMove:()=>clearTimeout(longPress.current),onContextMenu:e=>{e.preventDefault();clearTimeout(longPress.current);setManage(target)}}}
  function regularClick(fn){if(ignoreClick.current){ignoreClick.current=false;return}fn()}
@@ -16,16 +17,19 @@ export default function FaceLookbook({userId,book='face'}){
  useEffect(()=>{let live=true;loadFace(key).then(v=>{if(live)setState(v||initial())}).catch(e=>setError(e.message));return()=>{live=false;storage.current.dispose()}},[key]);
  useEffect(()=>{if(!state)return;let live=true;const paths=state.boards.flatMap(b=>b.slots.filter(p=>typeof p==='string'&&p));Promise.all(paths.map(async p=>[p,(await storage.current.storage.from().createSignedUrl(p)).data?.signedUrl])).then(entries=>{if(live)setUrls(Object.fromEntries(entries.filter(x=>x[1]))) });return()=>{live=false}},[state]);
  async function change(fn){if(busy||!state)return;const next=structuredClone(state);fn(next);setBusy(true);try{await saveFace(key,next);setState(next)}catch(e){setError('저장 실패: '+e.message)}finally{setBusy(false)}}
- const boards=state?.boards.filter(b=>b.group===group&&b.archived===archived)||[];
+ const term=searchQuery.trim().toLocaleLowerCase();
+ const boards=state?.boards.filter(b=>b.archived===archived&&(term?([b.name,state.groups.find(g=>g.id===b.group)?.name,...b.slots.map(v=>v?.type==='text'?v.text:''),...Object.values(b.meta||{}).flatMap(v=>[v?.link,v?.price])].filter(Boolean).join(' ').toLocaleLowerCase().includes(term)):b.group===group))||[];
  async function addPhoto(board,i,file){if(!file)return;setBusy(true);try{const path=(book+'-lookbook/')+userId+'/'+crypto.randomUUID();const result=await storage.current.storage.from().upload(path,file);if(result.error)throw result.error;const next=structuredClone(state);next.boards.find(b=>b.id===board.id).slots[i]=path;await saveFace(key,next);setState(next)}catch(e){setError('사진 저장 실패: '+e.message)}finally{setBusy(false)}}
  function editText(board,i){setChooser(null);setDraft(board.slots[i]?.type==='text'?board.slots[i].text:'');setEditor({boardId:board.id,index:i})}
  async function saveText(){if(!editor)return;const value=draft.trim();await change(s=>{const b=s.boards.find(b=>b.id===editor.boardId);b.slots[editor.index]=value?{type:'text',text:value}:null});setEditor(null)}
  async function setMeta(board,i,field){let value='';if(field==='link'){try{value=await navigator.clipboard.readText()}catch{value=prompt('링크를 붙여넣어 줘')||''}}else value=prompt('가격을 입력해 줘',board.meta?.[i]?.price||'')||'';if(!value)return;await change(s=>{const b=s.boards.find(x=>x.id===board.id);b.meta=b.meta||{};b.meta[i]={...b.meta[i],[field]:value}})}
  if(!state)return <p>{({voice:'VOICEBOOK',hair:'Hairbook',makeup:'Makeupbook',face:'FACEBOOK'}[book]||'FACEBOOK')} 불러오는 중…</p>;
  return <section className={`face-lookbook${book==='voice'?' voicebook-theme':''}`}>
-  <header className="fl-heading"><strong>{({voice:'VOICEBOOK',hair:'Hairbook',makeup:'Makeupbook',face:'FACEBOOK'}[book]||'FACEBOOK')}</strong><button onClick={()=>setArchived(v=>!v)}><Archive size={21}/> ({state.boards.filter(b=>b.archived).length})</button></header>
+  <header className="fl-heading"><strong>{({voice:'VOICEBOOK',hair:'Hairbook',makeup:'Makeupbook',face:'FACEBOOK'}[book]||'FACEBOOK')}</strong><button type="button" className="fl-search-toggle" aria-label="북 검색" aria-expanded={searchOpen} onClick={()=>{setSearchOpen(v=>!v);setSearchQuery("")}}><Search size={23}/></button><button onClick={()=>setArchived(v=>!v)}><Archive size={21}/> ({state.boards.filter(b=>b.archived).length})</button></header>
+  {searchOpen&&<div className="fl-search"><Search size={19}/><input autoFocus type="search" aria-label="북 전체 검색" placeholder="상위함 · 보드 · 메모 · 링크 · 가격 검색" value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}/>{searchQuery&&<button aria-label="검색어 지우기" onClick={()=>setSearchQuery("")}>×</button>}</div>}
   <div className="fl-groups">{state.groups.map(g=><button key={g.id} className={group===g.id?'active':''} onClick={()=>regularClick(()=>setGroup(g.id))} {...pressHandlers({kind:'group',id:g.id,name:g.name})}>{g.name}</button>)}<button aria-label="상위함 추가" onClick={()=>{const name=prompt('상위함 이름');if(name?.trim())change(s=>s.groups.push({id:crypto.randomUUID(),name:name.trim()}))}}><Plus/></button></div>
   {error&&<p role="alert">{error}</p>}
+  {term&&<p className="fl-search-count">전체 상위함에서 {boards.length}개 보드 검색됨</p>}
   <div className="fl-board-scroll">{boards.map(board=><article className="fl-board" key={board.id}>
    <div className="fl-board-title"><button onClick={()=>regularClick(()=>setManage({kind:'board',id:board.id,name:board.name}))} {...pressHandlers({kind:'board',id:board.id,name:board.name})}>{board.name}</button><button aria-label={archived?'보드 복원':'보드 아카이브'} onClick={()=>change(s=>{s.boards.find(b=>b.id===board.id).archived=!archived})}>{archived?<ArchiveRestore size={18}/>:<Archive size={18}/>}</button></div>
    <div className="fl-tiles">{board.slots.map((path,i)=>({path,i})).sort((a,b)=>Number(board.pins?.includes(b.i)&&!!b.path)-Number(board.pins?.includes(a.i)&&!!a.path)||a.i-b.i).map(({path,i})=><div className="fl-tile" key={i}>
