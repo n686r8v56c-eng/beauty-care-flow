@@ -36,3 +36,5 @@
 .face-care .face-import-actions button{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 12px;border-radius:8px;background:#e6dbef;color:#644780;font-size:13px}
 .face-care .face-import-actions button:last-child{background:#8662b4;color:#fff}
 .face-care .face-import-error{color:#ad3552;font-size:12px;margin:8px 0}
+
+.face-care > .bottom-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
