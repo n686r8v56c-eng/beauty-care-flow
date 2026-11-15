@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {Plus,Trash2,ExternalLink,ImagePlus,Check,Pencil,Search,X} from 'lucide-react';
+import {Plus,Trash2,ExternalLink,ImagePlus,Check,Pencil,Search,X,LayoutGrid,List} from 'lucide-react';
 import './HairSCollection.css';
 
 
@@ -90,7 +90,7 @@ function CollectionCard({item,onUpdate,onDelete}){
 }
 export default function HairSCollection({userId}){
  const read=()=>operate('readonly','getAll');const save=row=>operate('readwrite','put',row);const remove=id=>operate('readwrite','delete',id);
- const [url,setUrl]=useState(''),[search,setSearch]=useState(''),[items,setItems]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
+ const [searchOpen,setSearchOpen]=useState(false),[addOpen,setAddOpen]=useState(false),[view,setView]=useState('gallery');const [url,setUrl]=useState(''),[search,setSearch]=useState(''),[items,setItems]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  async function reload(){setItems((await read()||[]).filter(x=>x.userId===userId&&x.type==='link').sort((a,b)=>(b.createdAt||b.created||0)-(a.createdAt||a.created||0)))}
  useEffect(()=>{const refresh=()=>reload().catch(e=>setError('저장 기록을 읽지 못했어: '+e.message));refresh()},[userId]);
  async function add(e){
@@ -105,7 +105,7 @@ export default function HairSCollection({userId}){
    const title=parsed.platform==='youtube'?String(info.title||'').trim().slice(0,250):'';
    const thumb=parsed.platform==='youtube'?'https://i.ytimg.com/vi/'+parsed.id+'/hqdefault.jpg':(String(info.thumbnail||'').startsWith('https://')?info.thumbnail:'');
    await save({id:crypto.randomUUID(),platform:parsed.platform,url:parsed.url,title,tags:[],thumbnail:thumb,userId,type:'link',created:Date.now(),createdAt:Date.now()});
-   await reload();setUrl('');
+   await reload();setUrl('');setAddOpen(false);
    setNotice(parsed.platform==='instagram'?'인스타그램 링크 수집 완료! 카드에서 제목과 태그를 추가할 수 있어.':title?'유튜브 수집 완료!':'유튜브 링크 수집 완료! 제목은 수정할 수 있어.');
   }catch(err){setError('수집 실패: '+err.message)}
   finally{setBusy(false)}
@@ -114,18 +114,17 @@ export default function HairSCollection({userId}){
  async function del(item){if(!confirm('이 수집 링크를 삭제할까?'))return;try{await remove(item.id);await reload()}catch(err){setError('삭제 실패: '+err.message)}}
  const keyword=search.trim().replace(/^#/,'').toLocaleLowerCase();
  const filtered=keyword?items.filter(item=>[item.title,item.url,item.platform,...(Array.isArray(item.tags)?item.tags:[])].some(value=>String(value||'').toLocaleLowerCase().includes(keyword))):items;
- return <section className="collect">
-  <div className="collect-header"><h2>수집</h2><p>유튜브 · 인스타그램 링크를 모아두는 공간</p></div>
-  <div className="collect-search"><Search size={18}/><input type="search" aria-label="수집 목록 검색" placeholder="제목 · 태그 · 링크 검색" value={search} onChange={e=>setSearch(e.target.value)}/>{search&&<button type="button" aria-label="검색어 지우기" onClick={()=>setSearch('')}><X size={17}/></button>}</div>
-  <form className="collect-entry" onSubmit={add}>
-   <div><input aria-label="수집할 URL" type="url" required placeholder="유튜브 또는 인스타그램 링크 붙여넣기" value={url} onChange={e=>setUrl(e.target.value)} /><button type="submit" disabled={busy}><Plus size={17}/>{busy?'불러오는 중':'수집'}</button></div>
-  </form>
+ return <section className="collect collect-fashion">
+<div className="collect-fashion-head"><h2>영상</h2><button aria-label="검색" onClick={()=>setSearchOpen(true)}><Search/></button><span>({items.length})</span></div>
+<div className="collect-fashion-tools"><span>{filtered.length}개</span><div><button aria-label="갤러리" className={view==='gallery'?'active':''} onClick={()=>setView('gallery')}><LayoutGrid/></button><button aria-label="목록" className={view==='list'?'active':''} onClick={()=>setView('list')}><List/></button><button className="collect-fashion-add" aria-label="추가" onClick={()=>setAddOpen(true)}><Plus/></button></div></div>
+{searchOpen&&<div className="collect-fashion-shade" onClick={()=>setSearchOpen(false)}><div className="collect-fashion-dialog" onClick={e=>e.stopPropagation()}><header><strong>검색</strong><button onClick={()=>setSearchOpen(false)}><X/></button></header><div className="collect-search"><Search size={18}/><input autoFocus placeholder="제목 · 태그 · 링크 검색" value={search} onChange={e=>setSearch(e.target.value)}/></div><button className="collect-fashion-submit" onClick={()=>setSearchOpen(false)}>결과 보기 ({filtered.length}개)</button></div></div>}
+{addOpen&&<div className="collect-fashion-shade" onClick={()=>setAddOpen(false)}><div className="collect-fashion-dialog" onClick={e=>e.stopPropagation()}><header><strong>영상 수집</strong><button onClick={()=>setAddOpen(false)}><X/></button></header><form className="collect-entry" onSubmit={add}><div><input autoFocus type="url" required placeholder="유튜브 또는 인스타그램 링크" value={url} onChange={e=>setUrl(e.target.value)}/><button type="submit" disabled={busy}><Plus size={17}/> 수집</button></div></form></div></div>}
   {error&&<p className="collect-error" role="alert">{error}</p>}
   {notice&&<p className="collect-notice" role="status">{notice}</p>}
-  <div className="collect-counter">수집한 링크 <strong>{keyword?filtered.length+' / '+items.length:items.length}개</strong></div>
-  <div className="collect-list">{filtered.map(item=><CollectionCard key={item.id} item={item} onUpdate={update} onDelete={del}/>)}</div>
+  
+  <div className={view==='gallery'?'collect-list collect-gallery':'collect-list'}>{filtered.map(item=><CollectionCard key={item.id} item={item} onUpdate={update} onDelete={del}/>)}</div>
   {!items.length&&<p className="collect-empty">링크를 하나 붙여넣으면 여기에 쌓여 💜</p>}
   {items.length>0&&filtered.length===0&&<p className="collect-empty">검색 결과가 없어.</p>}
-  <p className="collect-foot">YouTube 제목은 공개 정보를 사용하고, YouTube와 Instagram 모두 태그를 직접 붙일 수 있어. Instagram도 제목을 직접 입력할 수 있고 썸네일을 수동 등록할 수 있어. 수집 링크와 수동 사진은 현재 이 기기의 IndexedDB에 저장돼. 다른 기기와 자동 동기화되지는 않아.</p>
+  <p className="collect-foot" hidden>YouTube 제목은 공개 정보를 사용하고, YouTube와 Instagram 모두 태그를 직접 붙일 수 있어. Instagram도 제목을 직접 입력할 수 있고 썸네일을 수동 등록할 수 있어. 수집 링크와 수동 사진은 현재 이 기기의 IndexedDB에 저장돼. 다른 기기와 자동 동기화되지는 않아.</p>
  </section>
 }
