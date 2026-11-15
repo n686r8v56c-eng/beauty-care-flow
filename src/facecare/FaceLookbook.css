@@ -43,3 +43,18 @@
 .fl-manage-modal h3{font-size:20px;font-weight:800;margin:0 0 18px}
 .fl-manage-modal>button{display:block;width:100%;text-align:left;background:#f7f0fd;border:1px solid #e5d6f0;border-radius:12px;color:#6f4a93;font-size:17px;font-weight:750;padding:15px 17px;margin-top:10px}
 .fl-groups button,.fl-board-title button{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+
+/* Compact book layout inside MakeUp and HairS; retain existing Face Care lookbook. */
+.hairs .face-lookbook{padding:6px 0 24px;min-width:0;max-width:100%}
+.hairs .face-lookbook .fl-heading{margin:4px 0 18px;gap:10px}
+.hairs .face-lookbook .fl-heading strong{font-size:clamp(20px,5.2vw,24px);letter-spacing:-.5px}
+.hairs .face-lookbook .fl-heading button{font-size:15px}
+.hairs .face-lookbook .fl-groups{gap:14px;margin-bottom:20px}
+.hairs .face-lookbook .fl-groups button{font-size:clamp(15px,4vw,18px)}
+.hairs .face-lookbook .fl-board-title{margin-bottom:10px}
+.hairs .face-lookbook .fl-board-title button:first-child{font-size:17px}
+.hairs .face-lookbook .fl-board-scroll{gap:10px;width:100%;max-width:100%;overflow-x:auto;scroll-padding-left:0;padding-right:0}
+.hairs .face-lookbook .fl-board{flex:0 0 min(70vw,320px);scroll-snap-align:start}
+.hairs .face-lookbook .fl-add-board{flex:0 0 88px;width:88px;min-height:120px;align-self:flex-start;margin-top:30px;padding:8px;white-space:normal}
+.hairs .face-lookbook .fl-tiles{gap:7px}
+.hairs .face-lookbook .fl-tile{border-radius:11px}
