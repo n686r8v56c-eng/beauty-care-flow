@@ -37,3 +37,9 @@
 .fl-board-title{margin-bottom:15px;gap:7px}
 .fl-board-title button:first-child{font-size:19px;font-weight:800;letter-spacing:-.5px;line-height:1.3;padding:0}
 .fl-board-title button:not(:first-child){padding:0}
+
+/* Long-press management menu matching Fashion Flow */
+.fl-manage-modal{width:min(100%,380px);padding:22px;border-radius:20px}
+.fl-manage-modal h3{font-size:20px;font-weight:800;margin:0 0 18px}
+.fl-manage-modal>button{display:block;width:100%;text-align:left;background:#f7f0fd;border:1px solid #e5d6f0;border-radius:12px;color:#6f4a93;font-size:17px;font-weight:750;padding:15px 17px;margin-top:10px}
+.fl-groups button,.fl-board-title button{touch-action:pan-y;user-select:none;-webkit-user-select:none}
