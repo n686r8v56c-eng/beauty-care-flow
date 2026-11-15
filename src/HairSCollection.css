@@ -65,3 +65,13 @@
 .hairs .collect-fashion .collect-gallery .collect-photo-wrap img,
 .hairs .collect-fashion .collect-gallery .collect-photo-trigger{display:block;width:100%;height:100%;object-fit:cover}
 @media(max-width:390px){.hairs .collect-fashion .collect-gallery .collect-photo-wrap{width:100%;max-width:none;flex:none}}
+
+
+/* Video collection folder/board navigation */
+.collect-fashion .collect-folder-tabs,.collect-fashion .collect-board-tabs{display:flex;align-items:center;gap:16px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;padding:0 2px 4px;margin-bottom:17px}
+.collect-fashion .collect-folder-tabs::-webkit-scrollbar,.collect-fashion .collect-board-tabs::-webkit-scrollbar{display:none}
+.collect-fashion .collect-folder-tabs button,.collect-fashion .collect-board-tabs button{border:0;background:transparent;color:#a18aae;font-size:16px;font-weight:650;padding:6px 0;flex-shrink:0;touch-action:pan-x}
+.collect-fashion .collect-folder-tabs button.selected,.collect-fashion .collect-board-tabs button.selected{color:#392842;font-weight:800}
+.collect-fashion .collect-board-tabs{margin-bottom:18px;gap:20px}
+.collect-fashion .collect-board-tabs button{font-size:15px}
+.collect-fashion .collect-fashion-dialog .collect-fashion-submit{display:flex;align-items:center;gap:8px}
