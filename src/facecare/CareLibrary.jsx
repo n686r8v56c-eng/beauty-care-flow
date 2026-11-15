@@ -19,7 +19,7 @@ const instagramUrl=raw=>{
   return 'https://www.instagram.com/'+(p[0]==='reels'?'reel':p[0])+'/'+p[1]+'/';
  }catch{return null}
 };
-const instagramLinks=value=>[...new Set((Array.isArray(value)?value:[]).map(instagramUrl).filter(Boolean))].slice(0,5);
+const instagramLinks=(value,limit=MAX)=>[...new Set((Array.isArray(value)?value:[]).map(instagramUrl).filter(Boolean))].slice(0,limit);
 const nextId=()=>globalThis.crypto?.randomUUID?.()||String(Date.now())+'-'+Math.random().toString(36).slice(2);
 const displayName=row=>row.en||row.title||row.ko||'이름 없음';
 const videoId=raw=>{
@@ -266,6 +266,7 @@ export function seedBodyCatalog(value){
  return {...value,items,levelNames,beautyCatalogSeedVersion:1,legStretchSeedVersion:Math.max(1,Number(value?.legStretchSeedVersion)||0)};
 }
 export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=false,database=null,userId=null,hideHeading=false}){
+ const videoLimit=area==='face'&&group==='massage'?10:MAX;
  const [level,setLevel]=useState(1);
  const [editingMode,setEditingMode]=useState(false);
  const [showDeleted,setShowDeleted]=useState(false);
@@ -324,8 +325,8 @@ export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=fals
  const visible=ordered.filter(x=>(x.level||1)===level);
  const archived=scoped.filter(x=>x.archived).sort((a,b)=>(a.level||1)-(b.level||1)||(a.sort||0)-(b.sort||0));
  const numberById=new Map(ordered.map((row,i)=>[row.id,i+1]));
- const videosFor=row=>normalizeVideoIds(row?.videos);
- const instagramsFor=row=>instagramLinks(row?.instagramLinks);
+ const videosFor=row=>normalizeVideoIds(row?.videos,videoLimit);
+ const instagramsFor=row=>instagramLinks(row?.instagramLinks,videoLimit);
  const linksFor=row=>[...videosFor(row).map(id=>({type:'youtube',id,url:'https://www.youtube.com/watch?v='+id})),...instagramsFor(row).map(url=>({type:'instagram',id:url,url}))];
  const openNew=()=>{setDraft({en:'',ko:'',level,note:''});setEditor({mode:'add'})};
  const openEdit=row=>{setDraft({en:row.en||row.title||'',ko:row.ko||'',level:row.level||1,note:row.note||''});setEditor({mode:'edit',id:row.id})};
@@ -368,8 +369,8 @@ export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=fals
   const instagramUrls=[...new Set(rawLinks.map(instagramUrl).filter(Boolean))];
   if(!youTubeIds.length&&!instagramUrls.length){alertUser('YouTube 또는 Instagram 릴스·게시물 주소를 입력해 줘.');return}
   const existing=linksFor(row);
-  const limit=Math.max(0,MAX-existing.length);
-  if(!limit){alertUser('영상 링크는 한 동작에 최대 5개까지 등록 가능해.');return}
+  const limit=Math.max(0,videoLimit-existing.length);
+  if(!limit){alertUser('영상 링크는 한 동작에 최대 '+videoLimit+'개까지 등록 가능해.');return}
   const fresh=[...youTubeIds.filter(id=>!videosFor(row).includes(id)).map(id=>({type:'youtube',id})),...instagramUrls.filter(url=>!instagramsFor(row).includes(url)).map(url=>({type:'instagram',url}))].slice(0,limit);
   if(!fresh.length){alertUser('이미 등록된 영상이야.');return}
   update(d=>{
@@ -382,7 +383,7 @@ export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=fals
   alertUser('영상 링크 '+fresh.length+'개 등록 완료');
  };
  const addFromClipboard=async row=>{
-  if(linksFor(row).length>=MAX){setOpened(row.id);alertUser('영상은 최대 5개까지 등록 가능해.');return}
+  if(linksFor(row).length>=videoLimit){setOpened(row.id);alertUser('영상은 최대 '+videoLimit+'개까지 등록 가능해.');return}
   let pasted='';
   try{
    if(!navigator.clipboard?.readText)throw new Error('clipboard unavailable');
@@ -428,7 +429,7 @@ export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=fals
    if(!confirm('현재 목록을 보존하면서 새 항목만 추가할까?'))return;
    update(d=>{
     const ids=new Set(d.items.map(x=>x.id));
-    raw.items.forEach(x=>{if(x?.id&&!ids.has(x.id)&&x.area==='face'&&['massage','stretch','bodyweight','machine'].includes(x.group)){d.items.push({...x,level:Number(x.level)||1,archived:!!x.archived,videos:normalizeVideoIds(x.videos),instagramLinks:instagramLinks(x.instagramLinks),instagramThumbnails:x.instagramThumbnails||{}});ids.add(x.id)}});
+    raw.items.forEach(x=>{if(x?.id&&!ids.has(x.id)&&x.area==='face'&&['massage','stretch','bodyweight','machine'].includes(x.group)){d.items.push({...x,level:Number(x.level)||1,archived:!!x.archived,videos:normalizeVideoIds(x.videos,x.group==='massage'?10:MAX),instagramLinks:instagramLinks(x.instagramLinks,x.group==='massage'?10:MAX),instagramThumbnails:x.instagramThumbnails||{}});ids.add(x.id)}});
     d.levelNames={...Object.fromEntries(Object.entries(raw.levelNames||{}).filter(([key])=>key.startsWith('face:'))),...(d.levelNames||{})};
     const routineIds=new Set((d.routines||[]).map(x=>x.id));
     for(const routine of raw.routines||[])if(routine?.id&&routine.area==='face'&&Array.isArray(routine.steps)&&!routineIds.has(routine.id)){d.routines.push(routine);routineIds.add(routine.id)}
@@ -497,7 +498,7 @@ export default function CareLibrary({data,onUpdate,area,group,sync,readOnly=fals
        <button type="button" onClick={()=>arr[index].type==='youtube'?copyLink(arr[index].id):navigator.clipboard.writeText(arr[index].url).then(()=>alertUser('링크 복사 완료')).catch(()=>alertUser('영상 열기를 이용해 줘.'))}><Link2 size={15}/> 링크 복사</button>
        <a href={arr[index].url} target="_blank" rel="noopener noreferrer"><ExternalLink size={15}/> {arr[index].type==='instagram'?'Instagram에서 열기':'영상 열기'}</a>
        {!readOnly&&<button type="button" onClick={()=>removeVideo(row,index)}><Trash2 size={15}/> 링크 삭제</button>}
-       {!readOnly&&arr.length<MAX&&<button type="button" onClick={()=>addFromClipboard(row)}><Plus size={15}/> 영상 추가</button>}
+       {!readOnly&&arr.length<videoLimit&&<button type="button" onClick={()=>addFromClipboard(row)}><Plus size={15}/> 영상 추가</button>}
       </div>
      </>:<div className="stretching-no-video"><strong>영상 링크 등록 대기</strong><span>오른쪽 링크 아이콘을 눌러 YouTube 또는 Instagram 주소를 등록해 줘.</span></div>}
     </div>}
