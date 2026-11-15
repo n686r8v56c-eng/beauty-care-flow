@@ -74,3 +74,12 @@
 .voicebook-theme .fl-add-row,.voicebook-theme .fl-add-board{background:#edf9f5;border-color:#a9ddd0;color:#218f80}
 .voicebook-theme .fl-modal h3{color:#286f66}
 .voicebook-theme .fl-choices button{background:#e6f7f2;color:#218f80;border-color:#c6e9e0}
+
+/* Shared book search for Face, Voice, Hair and Makeup */
+.fl-heading .fl-search-toggle{padding:4px;color:#8158ac;flex:0 0 auto}
+.fl-search{display:flex;align-items:center;gap:9px;border:1px solid #d9c7e8;border-radius:12px;padding:10px 12px;margin:-8px 0 18px;color:#8158ac;background:#fff}
+.fl-search input{border:0;outline:0;min-width:0;flex:1;font:inherit;font-size:15px;color:#463354;background:transparent}
+.fl-search button{border:0;background:none;color:inherit;font-size:20px}
+.fl-search-count{font-size:13px;color:#937ba6;margin:0 0 10px}
+.voicebook-theme .fl-heading .fl-search-toggle,.voicebook-theme .fl-search{color:#218f80}
+.voicebook-theme .fl-search{border-color:#bce5d9}
