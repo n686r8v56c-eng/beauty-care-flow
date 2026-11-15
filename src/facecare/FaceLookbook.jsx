@@ -4,7 +4,7 @@ import {loadFace,saveFace,photoStorage} from './storage.js';
 import './FaceLookbook.css';
 const initial=()=>({groups:[{id:'korea',name:'Korea'},{id:'china',name:'China'}],boards:[{id:'first',group:'korea',name:'보드1',slots:Array(8).fill(null),meta:{},pins:[],checks:[],archived:false}]});
 export default function FaceLookbook({userId,book='face'}){
- const key=(book==='voice'?'voice-lookbook:':'face-lookbook:')+userId;
+ const key=book+'-lookbook:'+userId;
  const [state,setState]=useState(null),[group,setGroup]=useState('korea'),[archived,setArchived]=useState(false),[urls,setUrls]=useState({}),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const storage=useRef(photoStorage()),files=useRef({});
  const [chooser,setChooser]=useState(null),[editor,setEditor]=useState(null),[draft,setDraft]=useState('');
@@ -17,11 +17,11 @@ export default function FaceLookbook({userId,book='face'}){
  useEffect(()=>{if(!state)return;let live=true;const paths=state.boards.flatMap(b=>b.slots.filter(p=>typeof p==='string'&&p));Promise.all(paths.map(async p=>[p,(await storage.current.storage.from().createSignedUrl(p)).data?.signedUrl])).then(entries=>{if(live)setUrls(Object.fromEntries(entries.filter(x=>x[1]))) });return()=>{live=false}},[state]);
  async function change(fn){if(busy||!state)return;const next=structuredClone(state);fn(next);setBusy(true);try{await saveFace(key,next);setState(next)}catch(e){setError('저장 실패: '+e.message)}finally{setBusy(false)}}
  const boards=state?.boards.filter(b=>b.group===group&&b.archived===archived)||[];
- async function addPhoto(board,i,file){if(!file)return;setBusy(true);try{const path=(book==='voice'?'voice-lookbook/':'face-lookbook/')+userId+'/'+crypto.randomUUID();const result=await storage.current.storage.from().upload(path,file);if(result.error)throw result.error;const next=structuredClone(state);next.boards.find(b=>b.id===board.id).slots[i]=path;await saveFace(key,next);setState(next)}catch(e){setError('사진 저장 실패: '+e.message)}finally{setBusy(false)}}
+ async function addPhoto(board,i,file){if(!file)return;setBusy(true);try{const path=(book+'-lookbook/')+userId+'/'+crypto.randomUUID();const result=await storage.current.storage.from().upload(path,file);if(result.error)throw result.error;const next=structuredClone(state);next.boards.find(b=>b.id===board.id).slots[i]=path;await saveFace(key,next);setState(next)}catch(e){setError('사진 저장 실패: '+e.message)}finally{setBusy(false)}}
  function editText(board,i){setChooser(null);setDraft(board.slots[i]?.type==='text'?board.slots[i].text:'');setEditor({boardId:board.id,index:i})}
  async function saveText(){if(!editor)return;const value=draft.trim();await change(s=>{const b=s.boards.find(b=>b.id===editor.boardId);b.slots[editor.index]=value?{type:'text',text:value}:null});setEditor(null)}
  async function setMeta(board,i,field){let value='';if(field==='link'){try{value=await navigator.clipboard.readText()}catch{value=prompt('링크를 붙여넣어 줘')||''}}else value=prompt('가격을 입력해 줘',board.meta?.[i]?.price||'')||'';if(!value)return;await change(s=>{const b=s.boards.find(x=>x.id===board.id);b.meta=b.meta||{};b.meta[i]={...b.meta[i],[field]:value}})}
- if(!state)return <p>{book==='voice'?'VOICEBOOK':'FACEBOOK'} 불러오는 중…</p>;
+ if(!state)return <p>{({voice:'VOICEBOOK',hair:'HAIRBOOK',makeup:'MUBOOK',face:'FACEBOOK'}[book]||'FACEBOOK')} 불러오는 중…</p>;
  return <section className="face-lookbook">
   <header className="fl-heading"><strong>{book==='voice'?'VOICEBOOK':'FACEBOOK'}</strong><button onClick={()=>setArchived(v=>!v)}><Archive size={21}/> ({state.boards.filter(b=>b.archived).length})</button></header>
   <div className="fl-groups">{state.groups.map(g=><button key={g.id} className={group===g.id?'active':''} onClick={()=>regularClick(()=>setGroup(g.id))} {...pressHandlers({kind:'group',id:g.id,name:g.name})}>{g.name}</button>)}<button aria-label="상위함 추가" onClick={()=>{const name=prompt('상위함 이름');if(name?.trim())change(s=>s.groups.push({id:crypto.randomUUID(),name:name.trim()}))}}><Plus/></button></div>
