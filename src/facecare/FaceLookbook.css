@@ -136,3 +136,16 @@
 .fl-short-tile .fl-embedded-video iframe{aspect-ratio:9/16}
 .fl-embedded-video .fl-video-close{position:absolute;bottom:6px;right:6px;z-index:5;border:0;border-radius:8px;background:#ffffffed;color:#69478b;padding:4px 9px;font-size:21px;line-height:1}
 .fl-embedded-video~.fl-pin,.fl-embedded-video~.fl-remove{z-index:4}
+
+/* Non-destructive text annotations on uploaded book photos. */
+.fl-image-with-overlay{display:block;position:relative;width:100%;height:100%;overflow:hidden}
+.fl-photo .fl-image-with-overlay img{width:100%;height:100%;object-fit:contain}
+.fl-overlay-label{position:absolute;transform:translate(-50%,-50%);max-width:94%;white-space:pre-wrap;overflow-wrap:anywhere;text-align:center;font-weight:700;line-height:1.15;text-shadow:0 1px 4px #000b;pointer-events:none}
+.fl-photo-editor{max-height:90dvh;overflow-y:auto}
+.fl-overlay-preview{position:relative;max-height:44dvh;aspect-ratio:9/16;margin:0 auto 14px;overflow:hidden;background:#211b29;touch-action:none;cursor:crosshair;border-radius:10px}
+.fl-overlay-preview img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.fl-photo-editor textarea{min-height:70px}
+.fl-overlay-controls{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-top:12px}
+.fl-overlay-controls label{display:flex;gap:7px;align-items:center;font-size:14px}
+.fl-overlay-controls input[type=range]{width:110px}
+.fl-overlay-help{font-size:12px;color:#7c688d;margin:9px 0}
