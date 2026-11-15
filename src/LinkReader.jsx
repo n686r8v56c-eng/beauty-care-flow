@@ -9,6 +9,17 @@ export default function LinkReader({userId}){
  useEffect(()=>{try{const raw=localStorage.getItem(KEY+':'+userId);if(raw){const parsed=JSON.parse(raw);if(Array.isArray(parsed.rows))setRows(parsed.rows)}}catch{}},[userId]);
  const exportLinks=async()=>{try{
   const result=[];const add=(section,title,url,tags=[])=>{const safe=valid(url);if(safe)result.push({section,title:String(title||''),url:safe,tags:Array.isArray(tags)?tags.filter(t=>typeof t==='string'):[]})};
+  // Face and Voice drills are stored in the primary Face Care record, not in the Book boards.
+  const care=await loadFace(userId);
+  for(const item of care?.items||[]){
+   if(item?.area!=='face'||!['massage','stretch'].includes(item.group))continue;
+   const section=item.group==='massage'?'Face':'Voice';
+   const title='Lv.'+(Number(item.level)||1)+' · '+(item.en||item.title||item.ko||'동작')+(item.ko&&item.ko!==(item.en||item.title)?' ('+item.ko+')':'');
+   for(const id of Array.isArray(item.videos)?item.videos:[]){
+    if(typeof id==='string'&&/^[\\w-]{11}$/.test(id))add(section,title,'https://www.youtube.com/watch?v='+id);
+   }
+   for(const url of Array.isArray(item.instagramLinks)?item.instagramLinks:[])add(section,title,url);
+  }
   for(const [book,name] of books){const id=book==='makeup'?userId+':makeup':userId;const state=await loadFace(book+'-lookbook:'+id);for(const board of state?.boards||[]){for(const [index,meta] of Object.entries(board.meta||{}))add(name,board.name+' · '+(Number(index)+1),meta?.link);for(const slot of board.slots||[])if(slot?.type==='text'){for(const match of String(slot.text||'').match(/https?:\/\/[^\s]+/g)||[])add(name,board.name,match)}}}
   for(const r of await localRows(userId))add(r.section,r.title,r.url,r.tags);
   const unique=[...new Map(result.map(r=>[r.section+'|'+r.url,r])).values()];
