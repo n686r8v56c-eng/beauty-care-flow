@@ -19,3 +19,10 @@
 .hairs-preview-nav button:disabled,.hairs-cover:disabled{opacity:.55}
 .hairs-preview-tags{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;color:#fff;font-size:13px}
 .hairs-notice{font-size:13px;color:#7651a0}
+
+/* MakeUp / HairS: three primary sections in a single bottom row. */
+.hairs{padding-bottom:calc(94px + env(safe-area-inset-bottom))}
+.hairs .hairs-bottom-tabs{position:fixed;left:0;right:0;bottom:0;z-index:14;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:#fff;border-top:1px solid #e9e0f1;border-radius:0;padding:10px max(12px,env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-right));box-sizing:border-box}
+.hairs .hairs-bottom-tabs button{min-width:0;min-height:44px;font-size:14px}
+.hairs .hairs-bottom-tabs button.active{background:#eee5f7;color:#7651a0}
+.hairs .hairs-upload-pair{bottom:calc(82px + env(safe-area-inset-bottom))}
