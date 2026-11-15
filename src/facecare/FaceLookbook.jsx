@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {Plus,Pin,Archive,ArchiveRestore,Link2,DollarSign,Copy,X,Check,Type,ImagePlus} from 'lucide-react';
+import {Plus,Pin,Archive,ArchiveRestore,Link2,Copy,X,Type,ImagePlus} from 'lucide-react';
 import {loadFace,saveFace,photoStorage} from './storage.js';
 import './FaceLookbook.css';
 const initial=()=>({groups:[{id:'korea',name:'Korea'},{id:'china',name:'China'}],boards:[{id:'first',group:'korea',name:'보드1',slots:Array(8).fill(null),meta:{},pins:[],checks:[],archived:false}]});
@@ -28,8 +28,8 @@ export default function FaceLookbook({userId}){
     <button className={'fl-photo '+(path?.type==='text'?'fl-text-tile':'')} disabled={busy} onClick={()=>path?.type==='text'?editText(board,i):path?files.current[board.id+':'+i]?.click():setChooser({boardId:board.id,index:i})}>{path?.type==='text'?<span>{path.text}</span>:typeof path==='string'&&urls[path]?<img src={urls[path]} alt={board.name+' 사진'}/>:<Plus size={25}/>}</button>
     {path&&<><button className={'fl-pin '+(board.pins?.includes(i)?'active':'')} onClick={()=>change(s=>{const b=s.boards.find(b=>b.id===board.id);b.pins=b.pins||[];b.pins=b.pins.includes(i)?b.pins.filter(n=>n!==i):[...b.pins,i]})}><Pin size={17} fill={board.pins?.includes(i)?'currentColor':'none'}/></button>
     <button className="fl-remove" onClick={()=>{if(confirm('이 칸의 내용을 제거할까?'))change(s=>{const b=s.boards.find(b=>b.id===board.id);b.slots[i]=null;b.meta&&delete b.meta[i];b.pins=(b.pins||[]).filter(n=>n!==i)})}}><X size={17}/></button>
-    <div className="fl-tools"><button onClick={()=>navigator.clipboard.writeText(board.meta?.[i]?.link||'').catch(()=>{})}><Copy size={17}/></button><button onClick={()=>board.meta?.[i]?.link?window.open(board.meta[i].link,'_blank','noopener,noreferrer'):setMeta(board,i,'link')}><Link2 size={17}/></button><button onClick={()=>setMeta(board,i,'price')}><DollarSign size={17}/></button></div>
-    <button className="fl-check" onClick={()=>change(s=>{const b=s.boards.find(b=>b.id===board.id);b.checks=b.checks||[];b.checks=b.checks.includes(i)?b.checks.filter(n=>n!==i):[...b.checks,i]})}><Check size={18} color={board.checks?.includes(i)?'#fff':'#8158ac'}/></button></>}
+    {typeof path==='string'&&<div className="fl-tools"><button onClick={()=>navigator.clipboard.writeText(board.meta?.[i]?.link||'').catch(()=>{})}><Copy size={17}/></button><button onClick={()=>board.meta?.[i]?.link?window.open(board.meta[i].link,'_blank','noopener,noreferrer'):setMeta(board,i,'link')}><Link2 size={17}/></button></div>}
+</>}
    </div>)}</div>
    <button className="fl-add-row" disabled={busy} onClick={()=>change(s=>s.boards.find(b=>b.id===board.id).slots.push(null,null))}><Plus size={17}/> 행 추가</button>
   </article>)}
