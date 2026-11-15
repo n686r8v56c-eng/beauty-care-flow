@@ -22,6 +22,19 @@ export default function FaceLookbook({userId,book='face'}){
  async function addPhoto(board,i,file){if(!file)return;setBusy(true);try{const path=(book+'-lookbook/')+userId+'/'+crypto.randomUUID();const result=await storage.current.storage.from().upload(path,file);if(result.error)throw result.error;const next=structuredClone(state);next.boards.find(b=>b.id===board.id).slots[i]=path;await saveFace(key,next);setState(next)}catch(e){setError('사진 저장 실패: '+e.message)}finally{setBusy(false)}}
  function editText(board,i){setChooser(null);setDraft(board.slots[i]?.type==='text'?board.slots[i].text:'');setEditor({boardId:board.id,index:i})}
  async function saveText(){if(!editor)return;const value=draft.trim();await change(s=>{const b=s.boards.find(b=>b.id===editor.boardId);b.slots[editor.index]=value?{type:'text',text:value}:null});setEditor(null)}
+ async function pasteSlotLink(board,i){
+  let raw='';
+  try{raw=await navigator.clipboard.readText()}catch{raw=prompt('링크를 붙여넣어 줘')||''}
+  if(!raw.trim())return;
+  let url;
+  try{url=new URL(raw.trim());if(!['https:','http:'].includes(url.protocol))throw Error('invalid')}catch{setError('http 또는 https 링크를 붙여넣어 줘.');return}
+  await change(st=>{const b=st.boards.find(x=>x.id===board.id);b.meta=b.meta||{};b.meta[i]={...b.meta[i],link:url.href}});
+ }
+ function openSlotLink(board,i){
+  const raw=board.meta?.[i]?.link;
+  if(!raw){setError('먼저 복사 아이콘으로 링크를 붙여넣어 줘.');return}
+  try{const url=new URL(raw);if(!['https:','http:'].includes(url.protocol))throw Error('invalid');window.open(url.href,'_blank','noopener,noreferrer')}catch{setError('저장된 링크 주소가 올바르지 않아.')}
+ }
  async function setMeta(board,i,field){let value='';if(field==='link'){try{value=await navigator.clipboard.readText()}catch{value=prompt('링크를 붙여넣어 줘')||''}}else value=prompt('가격을 입력해 줘',board.meta?.[i]?.price||'')||'';if(!value)return;await change(s=>{const b=s.boards.find(x=>x.id===board.id);b.meta=b.meta||{};b.meta[i]={...b.meta[i],[field]:value}})}
  if(!state)return <p>{({voice:'VOICEBOOK',hair:'Hairbook',makeup:'Makeupbook',face:'FACEBOOK'}[book]||'FACEBOOK')} 불러오는 중…</p>;
  return <section className={`face-lookbook${book==='voice'?' voicebook-theme':''}`}>
@@ -37,7 +50,7 @@ export default function FaceLookbook({userId,book='face'}){
     <button className={'fl-photo '+(path?.type==='text'?'fl-text-tile':'')} disabled={busy} onClick={()=>path?.type==='text'?editText(board,i):path?files.current[board.id+':'+i]?.click():setChooser({boardId:board.id,index:i})}>{path?.type==='text'?<span>{path.text}</span>:typeof path==='string'&&urls[path]?<img src={urls[path]} alt={board.name+' 사진'}/>:<Plus size={25}/>}</button>
     {path&&<><button className={'fl-pin '+(board.pins?.includes(i)?'active':'')} onClick={()=>change(s=>{const b=s.boards.find(b=>b.id===board.id);b.pins=b.pins||[];b.pins=b.pins.includes(i)?b.pins.filter(n=>n!==i):[...b.pins,i]})}><Pin size={17} fill={board.pins?.includes(i)?'currentColor':'none'}/></button>
     <button className="fl-remove" onClick={()=>{if(confirm('이 칸의 내용을 제거할까?'))change(s=>{const b=s.boards.find(b=>b.id===board.id);b.slots[i]=null;b.meta&&delete b.meta[i];b.pins=(b.pins||[]).filter(n=>n!==i)})}}><X size={17}/></button>
-    {typeof path==='string'&&<div className="fl-tools"><button onClick={()=>navigator.clipboard.writeText(board.meta?.[i]?.link||'').catch(()=>{})}><Copy size={17}/></button><button onClick={()=>board.meta?.[i]?.link?window.open(board.meta[i].link,'_blank','noopener,noreferrer'):setMeta(board,i,'link')}><Link2 size={17}/></button></div>}
+    <div className="fl-slot-link-actions"><button type="button" title="클립보드 링크 붙여넣기" aria-label="링크 붙여넣기" onClick={()=>pasteSlotLink(board,i)}><Copy size={16}/></button><button type="button" title="저장된 링크 열기" aria-label="링크 열기" className={board.meta?.[i]?.link?'has-link':''} onClick={()=>openSlotLink(board,i)}><Link2 size={16}/></button></div>
 </>}
    </div>)}</div>
    <button className="fl-add-row" disabled={busy} onClick={()=>change(s=>s.boards.find(b=>b.id===board.id).slots.push(null,null))}><Plus size={17}/> 행 추가</button>
