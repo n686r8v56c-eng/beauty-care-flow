@@ -29,3 +29,29 @@
 .hairs .collect-url{display:block;width:100%;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hairs .collect-foot{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 @media(max-width:390px){.hairs .collect-photo-wrap{flex-basis:91px}}
+
+
+/* Fashion Flow inspired video gallery for MakeUp and HairS */
+.collect-fashion .collect-fashion-head{display:flex;align-items:center;gap:15px;margin:0 0 22px}
+.collect-fashion .collect-fashion-head h2{font-size:24px;margin:0;font-weight:800;color:#392842}
+.collect-fashion .collect-fashion-head button{display:grid;place-items:center;border:0;background:none;color:#7651a0;padding:2px}
+.collect-fashion .collect-fashion-head span{font-size:15px;color:#574366}
+.collect-fashion .collect-fashion-tools{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;color:#9986a6;font-size:13px}
+.collect-fashion .collect-fashion-tools>div{display:flex;align-items:center;gap:4px}
+.collect-fashion .collect-fashion-tools button{display:grid;place-items:center;min-width:38px;height:38px;border:1px solid #e5d8ef;background:white;color:#8b6bb0;border-radius:9px}
+.collect-fashion .collect-fashion-tools button.active{background:#f0e8f8}
+.collect-fashion .collect-fashion-tools button.collect-fashion-add{margin-left:8px;background:#8055b1;color:white;border:0}
+.collect-fashion .collect-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.collect-fashion .collect-gallery .collect-card{min-width:0;border:0;padding:0;background:transparent;box-shadow:none}
+.collect-fashion .collect-gallery .collect-item-main{display:block;min-width:0}
+.collect-fashion .collect-gallery .collect-photo-wrap{width:100%;height:auto;aspect-ratio:1;overflow:hidden;border-radius:10px;background:#f3eef8}
+.collect-fashion .collect-gallery .collect-photo-wrap img,.collect-fashion .collect-gallery .collect-photo-trigger{width:100%;height:100%;object-fit:cover}
+.collect-fashion .collect-gallery .collect-info{display:none}
+.collect-fashion .collect-foot[hidden]{display:none}
+.collect-fashion-shade{position:fixed;inset:0;background:#24132b66;z-index:1100;display:flex;align-items:flex-start;justify-content:center;padding:25vh 15px 15px}
+.collect-fashion-dialog{width:min(100%,430px);background:#fff;border-radius:19px;padding:18px;box-shadow:0 12px 35px #24132b26}
+.collect-fashion-dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;color:#473452;font-size:19px}
+.collect-fashion-dialog header button{border:0;background:transparent;color:#79569b}
+.collect-fashion-dialog .collect-search{margin:0 0 12px}
+.collect-fashion-submit{display:block;margin-left:auto;background:#8055b1;color:white;border:0;border-radius:9px;padding:11px 14px;font-weight:700}
+.collect-fashion-dialog .collect-entry{margin:0}
