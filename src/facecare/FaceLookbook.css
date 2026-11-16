@@ -155,3 +155,11 @@
 .face-lookbook .fl-tile .fl-photo .fl-image-with-overlay{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;border-radius:inherit}
 .face-lookbook .fl-tile .fl-photo .fl-image-with-overlay img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 .face-lookbook .fl-tile .fl-photo .fl-image-with-overlay .fl-overlay-label{z-index:1}
+
+/* Third-level folders beneath Face / Voice group tabs. */
+.face-lookbook .fl-subfolders{display:flex;align-items:center;gap:18px;overflow-x:auto;white-space:nowrap;margin:0 0 19px;padding:0;scrollbar-width:none}
+.face-lookbook .fl-subfolders::-webkit-scrollbar{display:none}
+.face-lookbook .fl-subfolders button{appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;flex:0 0 auto;justify-content:center;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;color:#a48bb9;font:inherit;font-size:18px;line-height:1.4;font-weight:650;white-space:nowrap}
+.face-lookbook .fl-subfolders button.active{color:#483054;font-weight:800}
+.face-lookbook.voicebook-theme .fl-subfolders button{color:#6a9e95}
+.face-lookbook.voicebook-theme .fl-subfolders button.active{color:#237b6e}
